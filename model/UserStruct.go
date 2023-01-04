@@ -4,7 +4,8 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	StudentID int64    `json:"studentID"`
+	StudentID int64    `json:"studentID" binding:"required"`
+	PassWord  string   `json:"passWord" binding:"required"`
 	Name      string   `json:"name"`
 	Sex       string   `json:"sex"`
 	Avatar    string   `json:"avatar"`
