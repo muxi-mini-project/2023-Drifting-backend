@@ -1,6 +1,7 @@
 package qiniu
 
 import (
+	"Drifting/services/parse_yaml"
 	"context"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
@@ -9,11 +10,11 @@ import (
 
 // 上传图片到七牛云，然后返回状态和图片的url
 func UploadToQiNiu(file *multipart.FileHeader, folder string) (int, string) {
-
-	var AccessKey = "WhzfyH38HgrWZ-8AXSjbb0_0tj5bEwhod3d1w7-q" // 秘钥对
-	var SerectKey = "RuxhAZwPCvL0rEy4yAuY_u1dK1gBleTW7-Bo8jOn"
-	var Bucket = "drifting"                            // 空间名称
-	var ImgUrl = "http://rnqft1jxw.hn-bkt.clouddn.com" // 自定义域名或测试域名
+	v := parse_yaml.GetYaml()
+	var AccessKey = v.GetString("qiniu.AccessKey") // 秘钥对
+	var SerectKey = v.GetString("qiniu.SerectKey")
+	var Bucket = v.GetString("qiniu.Bucket") // 空间名称
+	var ImgUrl = v.GetString("qiniu.ImgUrl") // 自定义域名或测试域名
 
 	src, err := file.Open()
 	if err != nil {

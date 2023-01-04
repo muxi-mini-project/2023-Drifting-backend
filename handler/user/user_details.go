@@ -16,7 +16,7 @@ import (
 // @Produce  application/json
 // @Param  student_id body int true "student_id"
 // @Success 200 {object} model.User
-// @Router /api/v1/user/{id} [get]
+// @Router /api/v1/user/detail [get]
 func GetUserDetails(c *gin.Context) {
 	//从表单中获取学号
 	StudentID := c.PostForm("student_id")
@@ -35,6 +35,15 @@ func GetUserDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, UserInfo)
 }
 
+// @Summary 更新用户信息
+// @Description 更新用户信息
+// @Tags user
+// @Accept  application/json
+// @Produce  application/json
+// @Param  User body model.User true "UserInfo"
+// @Success 200 {string} string "Success"
+// @Failure 400 {string} string "Failure"
+// @Router api/v1/user/update [put]
 func UpdateUserInfo(c *gin.Context) {
 	//StudentID := c.PostForm("student_id")
 	//id, err1 := strconv.Atoi(StudentID)
@@ -53,6 +62,15 @@ func UpdateUserInfo(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "修改成功"})
 }
 
+// @Summary 更新用户头像
+// @Description 更新用户头像
+// @Tags user
+// @Accept  application/json
+// @Produce  application/json
+// @Param file formData file true "file"
+// @Success 200 {string} string "Success"
+// @Failure 400 {string} string "Failure"
+// @Router api/v1/user/avatar [put]
 func UpdateUserAvatar(c *gin.Context) {
 	f, err := c.FormFile("avatar")
 	if err != nil {
@@ -70,8 +88,4 @@ func UpdateUserAvatar(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"message": "成功"})
-}
-
-func CreateDriftingFile(c *gin.Context) {
-
 }

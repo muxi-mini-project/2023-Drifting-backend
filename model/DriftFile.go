@@ -8,7 +8,6 @@ type DriftingNote struct {
 	Contact string `json:"contact"`
 	Cover   string `json:"cover"`
 	OwnerID int
-	Owner   OwnDrifting      `gorm:"foreignkey:OwnerID"`
 	Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-notes"`
 }
 
