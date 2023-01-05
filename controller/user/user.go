@@ -1,4 +1,4 @@
-package controller
+package user
 
 import (
 	"Drifting/dao/mysql"
@@ -25,6 +25,7 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 	var OldUser model.User
 	OldUser.StudentID = UpdateUser.StudentID
 	fmt.Println(OldUser)
+	//更新用户信息
 	err := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateUser).Error
 	return *UpdateUser, err
 }
@@ -40,22 +41,8 @@ func UpdateUserAvatar(file *multipart.FileHeader, StudentID int64) error {
 	NewUser := OldUser
 	NewUser.Avatar = url
 	err = mysql.DB.Where("student_id = ?", StudentID).Updates(&NewUser).Error
+	var FriendsInfo model.Friend
+	FriendsInfo.Avatar = url
+	mysql.DB.Where("student_id = ?", StudentID).Updates(&FriendsInfo)
 	return err
-}
-
-// SearchAddFriend 查询添加好友记录
-func SearchAddFriend(UserId int64, FriendId int64) error {
-	var Adding model.AddingFriend
-	Adding.AdderID = UserId
-	Adding.TargetID = FriendId
-	err := mysql.DB.Where(&Adding).Find(&Adding).Error
-	return err
-}
-
-// SearchFriends 查询是否已添加好友
-func SearchFriends(StudentID int64, FriendId int64) error {
-	var SearchFriend model.UserAndFriends
-	SearchFriend.UserId = StudentID
-	SearchFriend.FriendId = FriendId
-	return mysql.DB.Where(&SearchFriend).Find(&SearchFriend).Error
 }

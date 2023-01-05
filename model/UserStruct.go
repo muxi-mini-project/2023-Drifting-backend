@@ -9,12 +9,18 @@ type User struct {
 	Name      string   `json:"name"`
 	Sex       string   `json:"sex"`
 	Avatar    string   `json:"avatar"`
+	SelfWord  string   `json:"selfWord"`
 	Friends   []Friend `gorm:"many2many:user_friends"`
 }
 
 func (u User) Error() string {
 	//TODO implement me
 	panic("implement me")
+}
+
+type AddingFriend struct {
+	AdderID  int64 `json:"adderID" `
+	TargetID int64 `json:"targetID"`
 }
 
 type Friend struct {
@@ -45,4 +51,5 @@ type UserInfo struct {
 	Name     string
 	Sex      string
 	SelfWord string
+	Avatar   string
 }

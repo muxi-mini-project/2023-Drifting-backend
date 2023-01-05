@@ -17,7 +17,7 @@ func InitMysql() {
 		return
 	}
 	DB = db
-	err = DB.AutoMigrate(model.User{}, model.Friend{}, model.DriftingNote{}, model.DriftingNovel{}, model.DriftingDrawing{}, model.DriftingPicture{})
+	err = DB.AutoMigrate(model.User{}, model.Friend{}, model.AddingFriend{}, model.DriftingNote{}, model.DriftingNovel{}, model.DriftingDrawing{}, model.DriftingPicture{})
 	if err != nil {
 		panic(err)
 		return

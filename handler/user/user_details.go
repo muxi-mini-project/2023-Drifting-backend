@@ -1,12 +1,11 @@
 package user
 
 import (
-	"Drifting/controller"
+	"Drifting/controller/user"
+	"Drifting/handler"
 	"Drifting/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
 )
 
 // @Summary 获取用户信息
@@ -14,25 +13,20 @@ import (
 // @Tags user
 // @Accept  application/json
 // @Produce  application/json
-// @Param  student_id body int true "student_id"
-// @Success 200 {object} model.User
+// @Param  Authorization header string true "token"
+// @Success 200 {object} model.UserInfo
+// @Failure 400 {string} string "wrong"
 // @Router /api/v1/user/detail [get]
 func GetUserDetails(c *gin.Context) {
-	//从表单中获取学号
-	StudentID := c.PostForm("student_id")
-	//格式转化进行搜索
-	id, err := strconv.Atoi(StudentID)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	StudentID := c.MustGet("student_id").(int64)
 	//执行获取信息函数
-	UserInfo, err := controller.GetUserInfo(id)
+	UserInfo, err := user.GetUserInfo(StudentID)
 	if err != nil {
 		c.JSON(400, gin.H{"message": "获取用户信息失败"})
 		return
 	}
 	//返回正确信息
-	c.JSON(http.StatusOK, UserInfo)
+	handler.SendGoodResponse(c, "获取成功", UserInfo)
 }
 
 // @Summary 更新用户信息
@@ -40,21 +34,22 @@ func GetUserDetails(c *gin.Context) {
 // @Tags user
 // @Accept  application/json
 // @Produce  application/json
+// @Param Authorization header string true "token"
 // @Param  User body model.User true "UserInfo"
 // @Success 200 {string} string "Success"
 // @Failure 400 {string} string "Failure"
 // @Router api/v1/user/update [put]
 func UpdateUserInfo(c *gin.Context) {
-	//StudentID := c.PostForm("student_id")
-	//id, err1 := strconv.Atoi(StudentID)
-	var user model.User
-	err := c.BindJSON(&user)
-	fmt.Println(user)
+	StudentID := c.MustGet("student_id").(int64)
+	var UpdateUser model.User
+	err := c.BindJSON(&UpdateUser)
+	UpdateUser.StudentID = StudentID
+	fmt.Println(UpdateUser)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
-	_, err = controller.UpdateUserInfo(&user)
+	_, err = user.UpdateUserInfo(&UpdateUser)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
@@ -67,22 +62,19 @@ func UpdateUserInfo(c *gin.Context) {
 // @Tags user
 // @Accept  application/json
 // @Produce  application/json
+// @Param Authorization header string true "token"
 // @Param file formData file true "file"
 // @Success 200 {string} string "Success"
 // @Failure 400 {string} string "Failure"
 // @Router api/v1/user/avatar [put]
 func UpdateUserAvatar(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
 	f, err := c.FormFile("avatar")
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
-	StudentID := c.PostForm("student_id")
-	id, err := strconv.Atoi(StudentID)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	err = controller.UpdateUserAvatar(f, id)
+	err = user.UpdateUserAvatar(f, StudentID)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
