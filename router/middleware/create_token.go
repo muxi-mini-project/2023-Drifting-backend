@@ -8,7 +8,7 @@ import (
 
 func GenerateToken(StudentId int64) (string, error) {
 	nowTime := time.Now()
-	expireTime := nowTime.Add(300 * time.Second)
+	expireTime := nowTime.Add(300 * time.Hour)
 	issuer := "KitZhangYs"
 	claims := token2.MyCustomClaims{
 		StudentID: StudentId,

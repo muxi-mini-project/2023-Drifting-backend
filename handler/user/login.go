@@ -49,6 +49,12 @@ func Login(c *gin.Context) {
 		//对密码进行base64加密
 		u.PassWord = base64.StdEncoding.EncodeToString([]byte(u.PassWord))
 		mysql.DB.Create(&u)
+		var friend model.Friend
+		friend.StudentID = u.StudentID
+		friend.Name = u.Name
+		friend.Sex = u.Sex
+		friend.SelfWord = u.SelfWord
+		mysql.DB.Create(&friend)
 	} else {
 		//在数据库中解密比较
 		password, _ := base64.StdEncoding.DecodeString(u.PassWord)
