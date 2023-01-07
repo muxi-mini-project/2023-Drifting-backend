@@ -34,13 +34,8 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 func UpdateUserAvatar(file *multipart.FileHeader, StudentID int64) error {
 	// 上传到七牛云
 	_, url := qiniu.UploadToQiNiu(file, "user_avatar/")
-	OldUser, err := GetUserInfo(StudentID)
-	if err != nil {
-		return err
-	}
-	NewUser := OldUser
-	NewUser.Avatar = url
-	err = mysql.DB.Where("student_id = ?", StudentID).Updates(&NewUser).Error
+	var U model.User
+	err := mysql.DB.Model(&U).Where("student_id = ?", StudentID).Update("avatar", url).Error
 	var FriendsInfo model.Friend
 	FriendsInfo.Avatar = url
 	mysql.DB.Where("student_id = ?", StudentID).Updates(&FriendsInfo)

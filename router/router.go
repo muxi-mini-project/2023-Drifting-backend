@@ -21,10 +21,14 @@ func RouterInit() *gin.Engine {
 		group1.PUT("/avatar", user.UpdateUserAvatar)
 	}
 
+	//好友相关路由
 	group2 := e.Group("/api/v1/friend").Use(middleware.Auth())
 	{
 		group2.POST("/friend", friend.AddFriend)
 		group2.GET("/get", friend.GetFriend)
+		group2.GET("/request", friend.GetAddRequest)
+		group2.POST("/pass", friend.PassAddRequest)
+		group2.DELETE("/delete", friend.DeleteFriend)
 	}
 	return e
 }

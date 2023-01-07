@@ -1,9 +1,9 @@
 package friend
 
 import (
-	"Drifting/controller/user"
 	"Drifting/handler"
 	"Drifting/model"
+	"Drifting/model/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,4 +57,73 @@ func GetFriend(c *gin.Context) {
 		return
 	}
 	handler.SendGoodResponse(c, "获取成功", FriendsInfo)
+}
+
+// @Summary 获取好友申请
+// @Description 获取好友申请
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Success 200 {object} []model.UserInfo "{"msg":"获取成功"}"
+// @Failure 400 {string} string "Failure"
+// @Router api/v1/friend/request [get]
+func GetAddRequest(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	FriendsInfo, err := user.GetRequest(StudentID)
+	if err != nil {
+		handler.SendBadResponse(c, "获取失败", nil)
+		return
+	}
+	handler.SendGoodResponse(c, "获取成功", FriendsInfo)
+}
+
+// @Summary 通过好友申请
+// @Description 通过好友申请，需将添加者的学号放在json中，对应键名为"adderID"
+// @Tags friend
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param UserAndFriends body model.UserAndFriends true "通过的好友学号"
+// @Success 200 {string} string "Success"
+// @Failure 400 {string} string "Failure"
+// @Router api/v1/friend/pass [post]
+func PassAddRequest(c *gin.Context) {
+	var Adding model.AddingFriend
+	Adding.TargetID = c.MustGet("student_id").(int64)
+	err := c.BindJSON(&Adding)
+	if err != nil {
+		handler.SendBadResponse(c, "获取数据出错", err)
+		return
+	}
+	err = user.PassRequest(Adding.AdderID, Adding.TargetID)
+	handler.SendGoodResponse(c, "您已通过了好友申请", nil)
+}
+
+// @Summary 删除好友
+// @Description 删除对应好友，需在json中提供对应好友学号，对应键名为"friendID"
+// @Tags friend
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param UserAndFriends body model.UserAndFriends true "要删除的好友"
+// @Success 200 {string} string "Success"
+// @Failure 400 {string} string "Failure"
+// @Router api/v1/friend/delete [delete]
+func DeleteFriend(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var UserAndFriend model.UserAndFriends
+	err := c.BindJSON(&UserAndFriend)
+	if err != nil {
+		handler.SendBadResponse(c, "获取数据失败", err)
+	}
+	err1, err2 := user.Delete(StudentID, UserAndFriend.FriendId)
+	if err1 != nil {
+		handler.SendBadResponse(c, "删除出错", err1)
+		return
+	}
+	if err2 != nil {
+		handler.SendBadResponse(c, "删除出错", err2)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", nil)
 }

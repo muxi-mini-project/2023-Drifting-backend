@@ -1,9 +1,9 @@
 package user
 
 import (
-	"Drifting/controller/user"
 	"Drifting/handler"
 	"Drifting/model"
+	"Drifting/model/user"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )

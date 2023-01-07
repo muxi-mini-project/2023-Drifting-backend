@@ -1,8 +1,8 @@
 package drifting_note
 
 import (
-	"Drifting/controller/drifting_file"
 	"Drifting/model"
+	"Drifting/model/drifting_file"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
