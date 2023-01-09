@@ -4,13 +4,13 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	StudentID int64    `json:"studentID" binding:"required"`
-	PassWord  string   `json:"passWord" binding:"required"`
-	Name      string   `json:"name"`
-	Sex       string   `json:"sex"`
-	Avatar    string   `json:"avatar"`
-	SelfWord  string   `json:"selfWord"`
-	Friends   []Friend `gorm:"many2many:user_friends"`
+	StudentID int64  `json:"studentID"`
+	PassWord  string `json:"passWord" gorm:"size:255"`
+	Name      string `json:"name" gorm:"size:255"`
+	Sex       string `json:"sex" gorm:"size:255"`
+	Avatar    string `json:"avatar" gorm:"size:255"`
+	SelfWord  string `json:"selfWord" gorm:"size:255"`
+	//Friends   []Friend `gorm:"many2many:user_friends"`
 }
 
 func (u User) Error() string {
@@ -26,11 +26,11 @@ type AddingFriend struct {
 type Friend struct {
 	gorm.Model
 	StudentID int64  `json:"studentID"`
-	Name      string `json:"name"`
-	Sex       string `json:"sex"`
-	Avatar    string `json:"avatar"`
-	SelfWord  string `json:"selfWord"`
-	Friends   []User `gorm:"many2many:user_friends"`
+	Name      string `json:"name" gorm:"size:255"`
+	Sex       string `json:"sex" gorm:"size:255"`
+	Avatar    string `json:"avatar" gorm:"size:255"`
+	SelfWord  string `json:"selfWord" gorm:"size:255"`
+	//Friends   []User `gorm:"many2many:user_friends"`
 }
 
 type OwnDrifting struct {
