@@ -10,7 +10,7 @@ func SearchAddFriend(UserId int64, FriendId int64) error {
 	var Adding model.AddingFriend
 	Adding.AdderID = UserId
 	Adding.TargetID = FriendId
-	err := mysql.DB.Where(&Adding).Find(&Adding).Error
+	err := mysql.DB.Where(&Adding).First(&Adding).Error
 	return err
 }
 
@@ -19,7 +19,7 @@ func SearchFriends(StudentID int64, FriendId int64) error {
 	var SearchFriend model.UserAndFriends
 	SearchFriend.UserId = StudentID
 	SearchFriend.FriendId = FriendId
-	return mysql.DB.Where(&SearchFriend).Find(&SearchFriend).Error
+	return mysql.DB.Where(&SearchFriend).First(&SearchFriend).Error
 }
 
 // AddFriend 添加好友
@@ -27,7 +27,8 @@ func AddFriend(UserId int64, FriendId int64) error {
 	var Adding model.AddingFriend
 	Adding.AdderID = UserId
 	Adding.TargetID = FriendId
-	return mysql.DB.Create(&Adding).Error
+	err := mysql.DB.Create(&Adding).Error
+	return err
 }
 
 // GetFriend 获取好友列表
@@ -100,7 +101,7 @@ func PassRequest(StudentID int64, FriendID int64) error {
 	if err != nil {
 		return err
 	}
-	err = mysql.DB.Delete(&Adding).Error
+	err = mysql.DB.Where(&Adding).Delete(&Adding).Error
 	if err != nil {
 		return err
 	}

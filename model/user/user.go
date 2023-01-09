@@ -26,7 +26,15 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 	OldUser.StudentID = UpdateUser.StudentID
 	fmt.Println(OldUser)
 	//更新用户信息
+	var UpdateInFriends model.Friend
+	UpdateInFriends.StudentID = UpdateUser.StudentID
+	UpdateInFriends.Name = UpdateUser.Name
+	UpdateInFriends.Sex = UpdateUser.Sex
 	err := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateUser).Error
+	err2 := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateInFriends).Error
+	if err2 != nil {
+		return model.User{}, err
+	}
 	return *UpdateUser, err
 }
 

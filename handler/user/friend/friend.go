@@ -38,6 +38,7 @@ func AddFriend(c *gin.Context) {
 	if err != nil {
 		handler.SendBadResponse(c, "添加出错", nil)
 	}
+	handler.SendGoodResponse(c, "申请已发出", nil)
 }
 
 // @Summary 获取好友列表信息
@@ -96,6 +97,10 @@ func PassAddRequest(c *gin.Context) {
 		return
 	}
 	err = user.PassRequest(Adding.AdderID, Adding.TargetID)
+	if err != nil {
+		handler.SendBadResponse(c, "出错", err)
+		return
+	}
 	handler.SendGoodResponse(c, "您已通过了好友申请", nil)
 }
 
