@@ -39,12 +39,11 @@ type OwnDrifting struct {
 }
 
 type JoinedDrifting struct {
-	gorm.Model
-	StudentID        int64             `json:"studentID"`
-	DriftingNotes    []DriftingNote    `gorm:"many2many:joined-drifting_drifting-note"`
-	DriftingDrawings []DriftingDrawing `gorm:"many2many:joined-drifting_drifting-drawing"`
-	DriftingNovels   []DriftingNovel   `gorm:"many2many:joined-drifting_drifting-novel"`
-	DriftingPictures []DriftingPicture `gorm:"many2many:joined-drifting_drifting-picture"`
+	StudentID         int64 `json:"studentID"`
+	DriftingNoteID    int64 `json:"driftingNoteID"`
+	DriftingPictureID int64 `json:"driftingPictureID"`
+	DriftingDrawingID int64 `json:"driftingDrawingID"`
+	DriftingNovelID   int64 `json:"DriftingNovelID"`
 }
 
 type UserInfo struct {
