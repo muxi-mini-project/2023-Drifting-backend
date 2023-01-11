@@ -35,15 +35,17 @@ func RouterInit() *gin.Engine {
 	//漂流本路由
 	DriftingNoteGroup := e.Group("/api/v1/drifting_note").Use(middleware.Auth())
 	{
-		DriftingNoteGroup.POST("/create", driftingnote.CreateDriftingNote)     //创建漂流本
-		DriftingNoteGroup.POST("/write", driftingnote.WriteDriftingNote)       //参与漂流本创作
-		DriftingNoteGroup.GET("/create", driftingnote.GetCreatedDriftingNotes) //获取用户创建的漂流本
-		DriftingNoteGroup.POST("/join", driftingnote.JoinDrifting)             //参加漂流本创作
-		DriftingNoteGroup.GET("/join", driftingnote.GetJoinedDriftingNotes)    //获取参与的漂流本
-		DriftingNoteGroup.GET("/detail", driftingnote.GetDriftingNoteDetail)   //获取漂流本详情
-		DriftingNoteGroup.POST("/invite", driftingnote.InviteFriend)           //邀请好友创作
-		DriftingNoteGroup.GET("/invite", driftingnote.GetInvite)               //获取邀请信息
-		DriftingNoteGroup.POST("/refuse", driftingnote.RefuseInvite)           //拒绝创作邀请
+		DriftingNoteGroup.POST("/create", driftingnote.CreateDriftingNote)          //创建漂流本*
+		DriftingNoteGroup.POST("/write", driftingnote.WriteDriftingNote)            //参与漂流本创作(写内容)*
+		DriftingNoteGroup.GET("/create", driftingnote.GetCreatedDriftingNotes)      //获取用户创建的漂流本*
+		DriftingNoteGroup.POST("/join", driftingnote.JoinDrifting)                  //参加漂流本创作(加入)*
+		DriftingNoteGroup.GET("/join", driftingnote.GetJoinedDriftingNotes)         //获取参与的漂流本*
+		DriftingNoteGroup.GET("/detail", driftingnote.GetDriftingNoteDetail)        //获取漂流本详情*
+		DriftingNoteGroup.POST("/invite", driftingnote.InviteFriend)                //邀请好友创作*
+		DriftingNoteGroup.GET("/invite", driftingnote.GetInvite)                    //获取邀请信息*
+		DriftingNoteGroup.POST("/refuse", driftingnote.RefuseInvite)                //拒绝创作邀请*
+		DriftingNoteGroup.POST("/accept", driftingnote.AcceptInvite)                //接受创作邀请*
+		DriftingNoteGroup.GET("/recommendation", driftingnote.RandomRecommendation) //随机推送*
 	}
 	return e
 }

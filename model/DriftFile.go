@@ -18,8 +18,8 @@ type DriftingNovel struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
-	Kind    string           `json:"kind" gorm:"size:255" binding:"required"`
-	Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
+	Kind    string `json:"kind" gorm:"size:255" binding:"required"`
+	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
 }
 
 type DriftingDrawing struct {
@@ -38,8 +38,8 @@ type DriftingPicture struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
-	Kind    string           `json:"kind" gorm:"size:255"`
-	Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-picture"`
+	Kind    string `json:"kind" gorm:"size:255"`
+	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-picture"`
 }
 
 type NoteContact struct {
@@ -49,8 +49,8 @@ type NoteContact struct {
 }
 
 type Invite struct {
-	HostID   int64  `json:"host_id" binding:"required"`
-	FriendID int64  `json:"friend_id" binding:"required"`
+	HostID   int64  `json:"host_id"`
+	FriendID int64  `json:"friend_id"`
 	FileID   int64  `json:"file_id" binding:"required"`
 	FileKind string `json:"file_kind" gorm:"size:255" binding:"required"`
 }

@@ -4,15 +4,11 @@ import (
 	"Drifting/dao/mysql"
 	"Drifting/model"
 	"Drifting/pkg/errno"
-	"Drifting/services/qiniu"
-	"mime/multipart"
 )
 
 // CreateDriftingNote 创建漂流本
-func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote, f *multipart.FileHeader) error {
+func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) error {
 	NewDriftingNote.OwnerID = StudentID
-	_, url := qiniu.UploadToQiNiu(f, "note_covers/")
-	NewDriftingNote.Cover = url
 	err := mysql.DB.Create(&NewDriftingNote).Error
 	return err
 }
@@ -52,7 +48,7 @@ func GetJoinedDriftingNotes(StudentID int64) ([]model.DriftingNote, error) {
 	for _, v := range Joined {
 		if v.DriftingNoteID != 0 {
 			var a model.DriftingNote
-			err = mysql.DB.Where("drifting_note_id = ?", v.DriftingNoteID).First(&a).Error
+			err = mysql.DB.Where("id = ?", v.DriftingNoteID).First(&a).Error
 			if err != nil {
 				return nil, err
 			}

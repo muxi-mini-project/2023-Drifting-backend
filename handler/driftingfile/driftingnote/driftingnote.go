@@ -25,12 +25,7 @@ func CreateDriftingNote(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息出错", err)
 		return
 	}
-	f, err := c.FormFile("cover")
-	if err != nil {
-		handler.SendBadResponse(c, "获取封面出错", err)
-		return
-	}
-	err = driftingfile.CreateDriftingNote(StudentID, NewDriftingNote, f)
+	err = driftingfile.CreateDriftingNote(StudentID, NewDriftingNote)
 	if err != nil {
 		handler.SendBadResponse(c, "创建出错", err)
 		return
@@ -38,7 +33,7 @@ func CreateDriftingNote(c *gin.Context) {
 	handler.SendGoodResponse(c, "创建成功", nil)
 }
 
-// @Summary 参与漂流本创作
+// @Summary 参与漂流本创作(写内容)
 // @Description 参与漂流本创作,需要在json中添加名为
 // @Tags driftingnote
 // @Accept  application/json
@@ -83,7 +78,7 @@ func GetCreatedDriftingNotes(c *gin.Context) {
 	handler.SendGoodResponse(c, "获取成功", notes)
 }
 
-// @Summary 参与漂流本创作
+// @Summary 参与漂流本创作(仅参与)
 // @Description 参与漂流本创作
 // @Tags driftingnote
 // @Accept  application/json
@@ -123,7 +118,7 @@ func GetJoinedDriftingNotes(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	notes, err := driftingfile.GetJoinedDriftingNotes(StudentID)
 	if err != nil {
-		handler.SendBadResponse(c, "创建出错", err)
+		handler.SendBadResponse(c, "获取出错", err)
 		return
 	}
 	handler.SendGoodResponse(c, "获取成功", notes)
