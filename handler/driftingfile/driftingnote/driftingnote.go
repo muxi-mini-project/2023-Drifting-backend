@@ -14,8 +14,8 @@ import (
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param DriftingNote body model.DriftingNote true "新建漂流本信息"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
+// @Success 200 {object} handler.Response "{"message":"创建成功"}"
+// @Failure 400 {object} handler.Response "{"message":"创建失败"}"
 // @Router api/v1/driftingnote/create [post]
 func CreateDriftingNote(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)

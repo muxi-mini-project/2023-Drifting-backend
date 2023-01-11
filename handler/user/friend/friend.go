@@ -14,8 +14,8 @@ import (
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param Adding body model.AddingFriend true "好友申请"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router api/v1/friend/add [post]
 func AddFriend(c *gin.Context) {
 	var Adding model.AddingFriend
@@ -48,7 +48,7 @@ func AddFriend(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.UserInfo "{"msg":"获取成功"}"
-// @Failure 400 {string} string "Failure"
+// @Failure 400 {object} handler.Response "{"message":"获取好友信息出错"}"
 // @Router api/v1/friend/get [get]
 func GetFriend(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
@@ -66,7 +66,7 @@ func GetFriend(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.UserInfo "{"msg":"获取成功"}"
-// @Failure 400 {string} string "Failure"
+// @Failure 400 {object} handler.Response "{"message":"获取失败"}"
 // @Router api/v1/friend/request [get]
 func GetAddRequest(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
@@ -85,8 +85,8 @@ func GetAddRequest(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param UserAndFriends body model.UserAndFriends true "通过的好友学号"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router api/v1/friend/pass [post]
 func PassAddRequest(c *gin.Context) {
 	var Adding model.AddingFriend
@@ -111,8 +111,8 @@ func PassAddRequest(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param UserAndFriends body model.UserAndFriends true "要删除的好友"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router api/v1/friend/delete [delete]
 func DeleteFriend(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
