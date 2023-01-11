@@ -8,7 +8,7 @@ import (
 )
 
 // @Summary 创建漂流本
-// @Description 创建漂流本
+// @Description 创建漂流本,kind必备，且只能为"熟人模式"和"生人模式"，否则将无法进行筛选及推送
 // @Tags driftingnote
 // @Accept  application/json
 // @Produce  application/json
@@ -220,15 +220,42 @@ func RefuseInvite(c *gin.Context) {
 	handler.SendGoodResponse(c, "拒绝成功", nil)
 }
 
-//// @Summary 随机推荐漂流本
-//// @Description 随机推荐一个漂流本
-//// @Tags driftingnote
-//// @Accept  application/json
-//// @Produce  application/json
-//// @Param Authorization header string true "token"
-//// @Success 200 {object} model.NoteInfo "{"message":"获取成功"}"
-//// @Failure 400 {object} handler.Response "{"message":"获取失败"}"
-//// @Router api/v1/driftingnote/recommendation [get]
-//func RandomRecommendation(c *gin.Context) {
-//
-//}
+// @Summary 随机推荐漂流本
+// @Description 随机推荐一个漂流本
+// @Tags driftingnote
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Success 200 {object} model.DriftingNote "{"message":"获取成功"}"
+// @Failure 400 {object} handler.Response "{"message":"获取失败"}"
+// @Router api/v1/driftingnote/recommendation [get]
+func RandomRecommendation(c *gin.Context) {
+	TheNote, err := driftingfile.RandomRecommend()
+	if err != nil {
+		handler.SendBadResponse(c, "漂流本推送失败", err)
+		return
+	}
+	handler.SendGoodResponse(c, "推送成功", TheNote)
+}
+
+// @Summary 接受创作邀请
+// @Description 接受好友创作邀请，注：该接口仅负责删除对应邀请记录，后续操作需调用参与创作接口
+// @Tags driftingnote
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param TheInvite body model.Invite true "要通过的邀请"
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
+// @Router api/v1/driftingnote/accept [post]
+func AcceptInvite(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var TheInvite model.Invite
+	err := c.BindJSON(&TheInvite)
+	if err != nil {
+		handler.SendBadResponse(c, "获取信息失败", err)
+		return
+	}
+	TheInvite.FriendID = StudentID
+
+}

@@ -111,7 +111,30 @@ func RefuseInvite(TheInvite model.Invite) error {
 	return err
 }
 
-//// RandomRecommend 随机推荐漂流本
-//func RandomRecommend() (model.NoteInfo, error) {
-//
-//}
+// RandomRecommend 随机推荐漂流本
+func RandomRecommend() (model.DriftingNote, error) {
+	var notes []model.DriftingNote
+	err := mysql.DB.Not("kind", "熟人模式").Find(&notes).Error
+	if err != nil {
+		return model.DriftingNote{}, err
+	}
+	m1 := make(map[int]model.DriftingNote)
+	for i := 0; i < len(notes); i++ {
+		m1[i] = notes[i]
+	}
+	var ret model.DriftingNote
+	for _, v := range m1 {
+		ret = v
+		break
+	}
+	for k, _ := range m1 {
+		delete(m1, k)
+	}
+	return ret, nil
+}
+
+// AcceptTheInvite 接受邀请
+func AcceptTheInvite(TheInvite model.Invite) error {
+	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
+	return err
+}

@@ -18,7 +18,7 @@ type DriftingNovel struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
-	Kind    string           `json:"kind" gorm:"size:255"`
+	Kind    string           `json:"kind" gorm:"size:255" binding:"required"`
 	Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
 }
 
