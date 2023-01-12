@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Drifting/handler/driftingfile/driftingdrawing"
 	"Drifting/handler/driftingfile/driftingnote"
 	"Drifting/handler/user"
 	"Drifting/handler/user/friend"
@@ -47,5 +48,22 @@ func RouterInit() *gin.Engine {
 		DriftingNoteGroup.POST("/accept", driftingnote.AcceptInvite)                //接受创作邀请*
 		DriftingNoteGroup.GET("/recommendation", driftingnote.RandomRecommendation) //随机推送*
 	}
+
+	DriftingDrawingGroup := e.Group("/api/v1/drifting_drawing").Use(middleware.Auth())
+	{
+		DriftingDrawingGroup.POST("/create", driftingdrawing.CreateDriftingDrawing)       //创建漂流画
+		DriftingDrawingGroup.POST("/draw", driftingdrawing.DrawDriftingDrawing)           //创作漂流画
+		DriftingDrawingGroup.POST("/join", driftingdrawing.JoinDriftingDrawing)           //参加漂流画创作(仅参加)
+		DriftingDrawingGroup.GET("/create", driftingdrawing.GetCreatedDriftingDrawings)   //获取用户创建的漂流画
+		DriftingDrawingGroup.POST("/join", driftingdrawing.JoinDriftingDrawing)           //参与漂流画创作(加入)
+		DriftingDrawingGroup.GET("/join", driftingdrawing.GetJoinedDriftingDrawings)      //获取用户参与的漂流画
+		DriftingDrawingGroup.GET("/detail", driftingdrawing.GetDriftingDrawingDetail)     //获取漂流画信息
+		DriftingDrawingGroup.POST("/invite", driftingdrawing.InviteFriend)                //邀请好友创作
+		DriftingDrawingGroup.GET("/invite", driftingdrawing.GetInvite)                    //获取邀请信息
+		DriftingDrawingGroup.POST("/refuse", driftingdrawing.RefuseInvite)                //拒绝创作邀请
+		DriftingDrawingGroup.POST("/accept", driftingdrawing.AcceptInvite)                //接受创作邀请
+		DriftingDrawingGroup.GET("/recommendation", driftingdrawing.RandomRecommendation) //随机推送
+	}
+
 	return e
 }
