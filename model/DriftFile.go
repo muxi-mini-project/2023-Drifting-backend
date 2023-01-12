@@ -28,6 +28,7 @@ type DriftingDrawing struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
+	Number  int    `json:"number" gorm:"size:255"`
 	Kind    string `json:"kind" gorm:"size:255"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-drawing"`
 }
@@ -59,4 +60,16 @@ type NoteInfo struct {
 	Name     string
 	OwnerID  int64
 	Contacts []NoteContact `json:"contacts"`
+}
+
+type DrawingContact struct {
+	FileID   int64  `json:"file_id"`
+	WriterID int64  `json:"writer_id"`
+	Picture  string `json:"picture" grom:"size:255"`
+}
+
+type DrawingInfo struct {
+	Name     string
+	OwnerID  int64
+	Contacts []DrawingContact
 }

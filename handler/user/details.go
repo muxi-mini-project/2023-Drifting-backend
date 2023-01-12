@@ -38,7 +38,7 @@ func GetUserDetails(c *gin.Context) {
 // @Param  User body model.User true "UserInfo"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router api/v1/user/update [put]
+// @Router /api/v1/user/update [put]
 func UpdateUserInfo(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var UpdateUser model.User
@@ -63,10 +63,10 @@ func UpdateUserInfo(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Param file formData file true "file"
+// @Param file formData file true "avatar"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router api/v1/user/avatar [put]
+// @Router /api/v1/user/avatar [put]
 func UpdateUserAvatar(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	f, err := c.FormFile("avatar")

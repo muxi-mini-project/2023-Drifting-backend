@@ -91,8 +91,8 @@ func GetInvites(StudentID int64) ([]model.Invite, error) {
 	return invites, err
 }
 
-// RefuseInvite 拒绝邀请
-func RefuseInvite(TheInvite model.Invite) error {
+// RefuseInvite 拒绝漂流本邀请
+func RefuseNoteInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
 	if err != nil {
 		return err
