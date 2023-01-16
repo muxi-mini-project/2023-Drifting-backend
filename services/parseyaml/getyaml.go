@@ -1,4 +1,4 @@
-package parse_yaml
+package parseyaml
 
 import "github.com/spf13/viper"
 

@@ -26,7 +26,15 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 	OldUser.StudentID = UpdateUser.StudentID
 	fmt.Println(OldUser)
 	//更新用户信息
+	var UpdateInFriends model.Friend
+	UpdateInFriends.StudentID = UpdateUser.StudentID
+	UpdateInFriends.Name = UpdateUser.Name
+	UpdateInFriends.Sex = UpdateUser.Sex
 	err := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateUser).Error
+	err2 := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateInFriends).Error
+	if err2 != nil {
+		return model.User{}, err
+	}
 	return *UpdateUser, err
 }
 
@@ -34,13 +42,8 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 func UpdateUserAvatar(file *multipart.FileHeader, StudentID int64) error {
 	// 上传到七牛云
 	_, url := qiniu.UploadToQiNiu(file, "user_avatar/")
-	OldUser, err := GetUserInfo(StudentID)
-	if err != nil {
-		return err
-	}
-	NewUser := OldUser
-	NewUser.Avatar = url
-	err = mysql.DB.Where("student_id = ?", StudentID).Updates(&NewUser).Error
+	var U model.User
+	err := mysql.DB.Model(&U).Where("student_id = ?", StudentID).Update("avatar", url).Error
 	var FriendsInfo model.Friend
 	FriendsInfo.Avatar = url
 	mysql.DB.Where("student_id = ?", StudentID).Updates(&FriendsInfo)

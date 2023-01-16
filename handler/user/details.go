@@ -1,9 +1,9 @@
 package user
 
 import (
-	"Drifting/controller/user"
 	"Drifting/handler"
 	"Drifting/model"
+	"Drifting/model/user"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +14,8 @@ import (
 // @Accept  application/json
 // @Produce  application/json
 // @Param  Authorization header string true "token"
-// @Success 200 {object} model.UserInfo
-// @Failure 400 {string} string "wrong"
+// @Success 200 {object} model.UserInfo "{"message":"获取成功"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/user/detail [get]
 func GetUserDetails(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
@@ -36,9 +36,9 @@ func GetUserDetails(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param  User body model.User true "UserInfo"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
-// @Router api/v1/user/update [put]
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
+// @Router /api/v1/user/update [put]
 func UpdateUserInfo(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var UpdateUser model.User
@@ -63,10 +63,10 @@ func UpdateUserInfo(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Param file formData file true "file"
-// @Success 200 {string} string "Success"
-// @Failure 400 {string} string "Failure"
-// @Router api/v1/user/avatar [put]
+// @Param file formData file true "avatar"
+// @Success 200 {object} handler.Response "{"message":"Success"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
+// @Router /api/v1/user/avatar [put]
 func UpdateUserAvatar(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	f, err := c.FormFile("avatar")

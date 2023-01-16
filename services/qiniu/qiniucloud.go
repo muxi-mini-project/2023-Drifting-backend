@@ -1,7 +1,7 @@
 package qiniu
 
 import (
-	"Drifting/services/parse_yaml"
+	"Drifting/services/parseyaml"
 	"context"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
@@ -10,7 +10,7 @@ import (
 
 // 上传图片到七牛云，然后返回状态和图片的url
 func UploadToQiNiu(file *multipart.FileHeader, folder string) (int, string) {
-	v := parse_yaml.GetYaml()
+	v := parseyaml.GetYaml()
 	var AccessKey = v.GetString("qiniu.AccessKey") // 秘钥对
 	var SerectKey = v.GetString("qiniu.SerectKey")
 	var Bucket = v.GetString("qiniu.Bucket") // 空间名称
