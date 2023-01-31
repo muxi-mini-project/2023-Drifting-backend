@@ -49,13 +49,13 @@ func RouterInit() *gin.Engine {
 		DriftingNoteGroup.GET("/recommendation", driftingnote.RandomRecommendation) //随机推送*
 	}
 
+	//漂流画路由
 	DriftingDrawingGroup := e.Group("/api/v1/drifting_drawing").Use(middleware.Auth())
 	{
 		DriftingDrawingGroup.POST("/create", driftingdrawing.CreateDriftingDrawing)       //创建漂流画
 		DriftingDrawingGroup.POST("/draw", driftingdrawing.DrawDriftingDrawing)           //创作漂流画
 		DriftingDrawingGroup.POST("/join", driftingdrawing.JoinDriftingDrawing)           //参加漂流画创作(仅参加)
 		DriftingDrawingGroup.GET("/create", driftingdrawing.GetCreatedDriftingDrawings)   //获取用户创建的漂流画
-		DriftingDrawingGroup.POST("/join", driftingdrawing.JoinDriftingDrawing)           //参与漂流画创作(加入)
 		DriftingDrawingGroup.GET("/join", driftingdrawing.GetJoinedDriftingDrawings)      //获取用户参与的漂流画
 		DriftingDrawingGroup.GET("/detail", driftingdrawing.GetDriftingDrawingDetail)     //获取漂流画信息
 		DriftingDrawingGroup.POST("/invite", driftingdrawing.InviteFriend)                //邀请好友创作

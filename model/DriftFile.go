@@ -73,3 +73,14 @@ type DrawingInfo struct {
 	OwnerID  int64
 	Contacts []DrawingContact
 }
+
+type GetFileId struct {
+	ID uint `json:"id"`
+}
+
+type CreateFile struct {
+	Name   string `json:"name" gorm:"size:255"`
+	Cover  string `json:"cover" gorm:"size:255"`
+	Number int    `json:"number"`
+	Kind   string `json:"kind" gorm:"size:255"`
+}

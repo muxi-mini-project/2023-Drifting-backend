@@ -29,6 +29,17 @@ definitions:
       targetID:
         type: integer
     type: object
+  model.CreateFile:
+    properties:
+      cover:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+    type: object
   model.DrawingContact:
     properties:
       file_id:
@@ -93,6 +104,11 @@ definitions:
       updatedAt:
         type: string
     type: object
+  model.GetFileId:
+    properties:
+      id:
+        type: integer
+    type: object
   model.Invite:
     properties:
       file_id:
@@ -120,6 +136,13 @@ definitions:
       studentID:
         type: integer
     type: object
+  model.LoginRequest:
+    properties:
+      passWord:
+        type: string
+      studentID:
+        type: integer
+    type: object
   model.NoteContact:
     properties:
       file_id:
@@ -140,29 +163,6 @@ definitions:
       ownerID:
         type: integer
     type: object
-  model.User:
-    properties:
-      avatar:
-        type: string
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      name:
-        type: string
-      passWord:
-        type: string
-      selfWord:
-        type: string
-      sex:
-        type: string
-      studentID:
-        type: integer
-      updatedAt:
-        type: string
-    type: object
   model.UserAndFriends:
     properties:
       friendId:
@@ -181,7 +181,7 @@ definitions:
       sex:
         type: string
     type: object
-host: localhost:8080
+host: 116.204.121.9:8088
 info:
   contact:
     email: SJMbaiyang@163.com
@@ -191,38 +191,7 @@ info:
   title: Drifting API
   version: "1.0"
 paths:
-  /api/v1/driftingdawing/invite:
-    post:
-      consumes:
-      - application/json
-      description: 邀请好友创作，需在json中提供好友学号，漂流本ID，及文件类型(漂流本需注明是DriftingNote)
-      parameters:
-      - description: token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 新建邀请
-        in: body
-        name: NewInvite
-        required: true
-        schema:
-          $ref: '#/definitions/model.Invite'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"message":"邀请成功"}'
-          schema:
-            $ref: '#/definitions/Response'
-        "400":
-          description: '{"message":"邀请失败，你可能已邀请过该好友"}'
-          schema:
-            $ref: '#/definitions/Response'
-      summary: 邀请好友进行创作
-      tags:
-      - driftingdrawing
-  /api/v1/driftingdrawing/accept:
+  /api/v1/drifting_drawing/accept:
     post:
       consumes:
       - application/json
@@ -253,7 +222,7 @@ paths:
       summary: 接受创作邀请
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/create:
+  /api/v1/drifting_drawing/create:
     get:
       consumes:
       - application/json
@@ -295,7 +264,7 @@ paths:
         name: NewDrawing
         required: true
         schema:
-          $ref: '#/definitions/model.DriftingDrawing'
+          $ref: '#/definitions/model.CreateFile'
       produces:
       - application/json
       responses:
@@ -310,18 +279,23 @@ paths:
       summary: 创建漂流画
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/detail:
+  /api/v1/drifting_drawing/detail:
     get:
       consumes:
       - application/json
       description: 获取漂流本内容，需在json中提供漂流画的ID
       parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: 获取的ID
         in: body
         name: FDriftingNote
         required: true
         schema:
-          $ref: '#/definitions/model.DriftingDrawing'
+          $ref: '#/definitions/model.GetFileId'
       produces:
       - application/json
       responses:
@@ -336,7 +310,7 @@ paths:
       summary: 获取漂流画内容
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/draw:
+  /api/v1/drifting_drawing/draw:
     post:
       consumes:
       - application/json
@@ -371,7 +345,7 @@ paths:
       summary: 创作漂流画
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/invite:
+  /api/v1/drifting_drawing/invite:
     get:
       consumes:
       - application/json
@@ -398,7 +372,37 @@ paths:
       summary: 获取邀请信息
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/join:
+    post:
+      consumes:
+      - application/json
+      description: 邀请好友创作，需在json中提供好友学号，漂流本ID，及文件类型(漂流本需注明是DriftingNote)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建邀请
+        in: body
+        name: NewInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"邀请成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"邀请失败，你可能已邀请过该好友"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 邀请好友进行创作
+      tags:
+      - driftingdrawing
+  /api/v1/drifting_drawing/join:
     get:
       consumes:
       - application/json
@@ -455,7 +459,7 @@ paths:
       summary: 参加漂流画创作(仅参加)
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/recommendation:
+  /api/v1/drifting_drawing/recommendation:
     get:
       consumes:
       - application/json
@@ -480,7 +484,7 @@ paths:
       summary: 随机推荐漂流画
       tags:
       - driftingdrawing
-  /api/v1/driftingdrawing/refuse:
+  /api/v1/drifting_drawing/refuse:
     post:
       consumes:
       - application/json
@@ -511,7 +515,7 @@ paths:
       summary: 拒绝邀请
       tags:
       - driftingdrawing
-  /api/v1/driftingnote/accept:
+  /api/v1/drifting_note/accept:
     post:
       consumes:
       - application/json
@@ -542,7 +546,7 @@ paths:
       summary: 接受创作邀请
       tags:
       - driftingnote
-  /api/v1/driftingnote/create:
+  /api/v1/drifting_note/create:
     get:
       consumes:
       - application/json
@@ -584,7 +588,7 @@ paths:
         name: DriftingNote
         required: true
         schema:
-          $ref: '#/definitions/model.DriftingNote'
+          $ref: '#/definitions/model.CreateFile'
       produces:
       - application/json
       responses:
@@ -599,12 +603,17 @@ paths:
       summary: 创建漂流本
       tags:
       - driftingnote
-  /api/v1/driftingnote/detail:
+  /api/v1/drifting_note/detail:
     get:
       consumes:
       - application/json
       description: 获取漂流本内容，需在json中提供漂流本的ID
       parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: 获取的ID
         in: body
         name: FDriftingNote
@@ -625,7 +634,7 @@ paths:
       summary: 获取漂流本内容
       tags:
       - driftingnote
-  /api/v1/driftingnote/invite:
+  /api/v1/drifting_note/invite:
     get:
       consumes:
       - application/json
@@ -682,7 +691,7 @@ paths:
       summary: 邀请好友进行创作
       tags:
       - driftingnote
-  /api/v1/driftingnote/join:
+  /api/v1/drifting_note/join:
     get:
       consumes:
       - application/json
@@ -739,7 +748,7 @@ paths:
       summary: 参与漂流本创作(仅参与)
       tags:
       - driftingnote
-  /api/v1/driftingnote/recommendation:
+  /api/v1/drifting_note/recommendation:
     get:
       consumes:
       - application/json
@@ -764,7 +773,7 @@ paths:
       summary: 随机推荐漂流本
       tags:
       - driftingnote
-  /api/v1/driftingnote/refuse:
+  /api/v1/drifting_note/refuse:
     post:
       consumes:
       - application/json
@@ -795,7 +804,7 @@ paths:
       summary: 拒绝邀请
       tags:
       - driftingnote
-  /api/v1/driftingnote/write:
+  /api/v1/drifting_note/write:
     post:
       consumes:
       - application/json
@@ -973,6 +982,40 @@ paths:
       summary: 获取好友申请
       tags:
       - friend
+  /api/v1/login:
+    post:
+      description: 一站式登录
+      parameters:
+      - description: 登录用户信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"将student_id作为token保留"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"error_code":"20001", "message":"Fail."} or {"error_code":"00002",
+            "message":"Lack Param Or Param Not Satisfiable."}'
+          schema:
+            $ref: '#/definitions/errno.Errno'
+        "401":
+          description: '{"error_code":"10001", "message":"Password or account wrong."}
+            身份认证失败 重新登录'
+          schema:
+            $ref: '#/definitions/errno.Errno'
+        "500":
+          description: '{"error_code":"30001", "message":"Fail."} 失败'
+          schema:
+            $ref: '#/definitions/errno.Errno'
+      summary: 登录
+      tags:
+      - user
   /api/v1/user/avatar:
     put:
       consumes:
@@ -986,7 +1029,7 @@ paths:
         type: string
       - description: avatar
         in: formData
-        name: file
+        name: avatar
         required: true
         type: file
       produces:
@@ -1044,7 +1087,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/model.User'
+          $ref: '#/definitions/model.UserInfo'
       produces:
       - application/json
       responses:
@@ -1057,40 +1100,6 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: 更新用户信息
-      tags:
-      - user
-  /login:
-    post:
-      description: 一站式登录
-      parameters:
-      - description: 登录用户信息
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/model.User'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"msg":"将student_id作为token保留"}'
-          schema:
-            $ref: '#/definitions/Response'
-        "400":
-          description: '{"error_code":"20001", "message":"Fail."} or {"error_code":"00002",
-            "message":"Lack Param Or Param Not Satisfiable."}'
-          schema:
-            $ref: '#/definitions/errno.Errno'
-        "401":
-          description: '{"error_code":"10001", "message":"Password or account wrong."}
-            身份认证失败 重新登录'
-          schema:
-            $ref: '#/definitions/errno.Errno'
-        "500":
-          description: '{"error_code":"30001", "message":"Fail."} 失败'
-          schema:
-            $ref: '#/definitions/errno.Errno'
-      summary: 登录
       tags:
       - user
 swagger: "2.0"

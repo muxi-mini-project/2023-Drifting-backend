@@ -20,54 +20,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/driftingdawing/invite": {
-            "post": {
-                "description": "邀请好友创作，需在json中提供好友学号，漂流本ID，及文件类型(漂流本需注明是DriftingNote)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "driftingdrawing"
-                ],
-                "summary": "邀请好友进行创作",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "新建邀请",
-                        "name": "NewInvite",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Invite"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"message\":\"邀请成功\"}",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    },
-                    "400": {
-                        "description": "{\"message\":\"邀请失败，你可能已邀请过该好友\"}",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/driftingdrawing/accept": {
+        "/api/v1/drifting_drawing/accept": {
             "post": {
                 "description": "接受好友创作邀请，注：该接口仅负责删除对应邀请记录，后续操作需调用参与创作接口",
                 "consumes": [
@@ -114,7 +67,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/create": {
+        "/api/v1/drifting_drawing/create": {
             "get": {
                 "description": "获取对应用户创建的漂流画",
                 "consumes": [
@@ -180,7 +133,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingDrawing"
+                            "$ref": "#/definitions/model.CreateFile"
                         }
                     }
                 ],
@@ -200,7 +153,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/detail": {
+        "/api/v1/drifting_drawing/detail": {
             "get": {
                 "description": "获取漂流本内容，需在json中提供漂流画的ID",
                 "consumes": [
@@ -215,12 +168,19 @@ const docTemplate = `{
                 "summary": "获取漂流画内容",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "获取的ID",
                         "name": "FDriftingNote",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingDrawing"
+                            "$ref": "#/definitions/model.GetFileId"
                         }
                     }
                 ],
@@ -240,7 +200,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/draw": {
+        "/api/v1/drifting_drawing/draw": {
             "post": {
                 "description": "创作漂流画",
                 "consumes": [
@@ -292,7 +252,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/invite": {
+        "/api/v1/drifting_drawing/invite": {
             "get": {
                 "description": "获取该用户的邀请信息",
                 "consumes": [
@@ -331,9 +291,54 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "邀请好友创作，需在json中提供好友学号，漂流本ID，及文件类型(漂流本需注明是DriftingNote)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "driftingdrawing"
+                ],
+                "summary": "邀请好友进行创作",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新建邀请",
+                        "name": "NewInvite",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Invite"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"邀请成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"邀请失败，你可能已邀请过该好友\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/driftingdrawing/join": {
+        "/api/v1/drifting_drawing/join": {
             "get": {
                 "description": "获取用户参加得漂流画信息",
                 "consumes": [
@@ -419,7 +424,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/recommendation": {
+        "/api/v1/drifting_drawing/recommendation": {
             "get": {
                 "description": "随机推荐一个漂流画",
                 "consumes": [
@@ -457,7 +462,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingdrawing/refuse": {
+        "/api/v1/drifting_drawing/refuse": {
             "post": {
                 "description": "拒绝创作邀请",
                 "consumes": [
@@ -504,7 +509,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/accept": {
+        "/api/v1/drifting_note/accept": {
             "post": {
                 "description": "接受好友创作邀请，注：该接口仅负责删除对应邀请记录，后续操作需调用参与创作接口",
                 "consumes": [
@@ -551,7 +556,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/create": {
+        "/api/v1/drifting_note/create": {
             "get": {
                 "description": "获取对应用户创建的漂流本",
                 "consumes": [
@@ -617,7 +622,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingNote"
+                            "$ref": "#/definitions/model.CreateFile"
                         }
                     }
                 ],
@@ -637,7 +642,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/detail": {
+        "/api/v1/drifting_note/detail": {
             "get": {
                 "description": "获取漂流本内容，需在json中提供漂流本的ID",
                 "consumes": [
@@ -651,6 +656,13 @@ const docTemplate = `{
                 ],
                 "summary": "获取漂流本内容",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "获取的ID",
                         "name": "FDriftingNote",
@@ -677,7 +689,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/invite": {
+        "/api/v1/drifting_note/invite": {
             "get": {
                 "description": "获取该用户的邀请信息",
                 "consumes": [
@@ -763,7 +775,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/join": {
+        "/api/v1/drifting_note/join": {
             "get": {
                 "description": "获取用户参加得漂流本信息",
                 "consumes": [
@@ -849,7 +861,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/recommendation": {
+        "/api/v1/drifting_note/recommendation": {
             "get": {
                 "description": "随机推荐一个漂流本",
                 "consumes": [
@@ -887,7 +899,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/refuse": {
+        "/api/v1/drifting_note/refuse": {
             "post": {
                 "description": "拒绝创作邀请",
                 "consumes": [
@@ -934,7 +946,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/driftingnote/write": {
+        "/api/v1/drifting_note/write": {
             "post": {
                 "description": "参与漂流本创作,需要在json中添加名为",
                 "consumes": [
@@ -1204,6 +1216,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/login": {
+            "post": {
+                "description": "一站式登录",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "登录",
+                "parameters": [
+                    {
+                        "description": "登录用户信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\":\"将student_id作为token保留\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error_code\":\"20001\", \"message\":\"Fail.\"} or {\"error_code\":\"00002\", \"message\":\"Lack Param Or Param Not Satisfiable.\"}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Errno"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error_code\":\"10001\", \"message\":\"Password or account wrong.\"} 身份认证失败 重新登录",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Errno"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error_code\":\"30001\", \"message\":\"Fail.\"} 失败",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Errno"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/avatar": {
             "put": {
                 "description": "更新用户头像",
@@ -1228,7 +1289,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "avatar",
-                        "name": "file",
+                        "name": "avatar",
                         "in": "formData",
                         "required": true
                     }
@@ -1314,7 +1375,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/model.UserInfo"
                         }
                     }
                 ],
@@ -1329,55 +1390,6 @@ const docTemplate = `{
                         "description": "{\"message\":\"Failure\"}",
                         "schema": {
                             "$ref": "#/definitions/Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "description": "一站式登录",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "登录",
-                "parameters": [
-                    {
-                        "description": "登录用户信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"msg\":\"将student_id作为token保留\"}",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    },
-                    "400": {
-                        "description": "{\"error_code\":\"20001\", \"message\":\"Fail.\"} or {\"error_code\":\"00002\", \"message\":\"Lack Param Or Param Not Satisfiable.\"}",
-                        "schema": {
-                            "$ref": "#/definitions/errno.Errno"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"error_code\":\"10001\", \"message\":\"Password or account wrong.\"} 身份认证失败 重新登录",
-                        "schema": {
-                            "$ref": "#/definitions/errno.Errno"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"error_code\":\"30001\", \"message\":\"Fail.\"} 失败",
-                        "schema": {
-                            "$ref": "#/definitions/errno.Errno"
                         }
                     }
                 }
@@ -1425,6 +1437,23 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "targetID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.CreateFile": {
+            "type": "object",
+            "properties": {
+                "cover": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "number": {
                     "type": "integer"
                 }
             }
@@ -1527,6 +1556,14 @@ const docTemplate = `{
                 }
             }
         },
+        "model.GetFileId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.Invite": {
             "type": "object",
             "required": [
@@ -1568,6 +1605,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "passWord": {
+                    "type": "string"
+                },
+                "studentID": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.NoteContact": {
             "type": "object",
             "properties": {
@@ -1596,41 +1644,6 @@ const docTemplate = `{
                 },
                 "ownerID": {
                     "type": "integer"
-                }
-            }
-        },
-        "model.User": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "passWord": {
-                    "type": "string"
-                },
-                "selfWord": {
-                    "type": "string"
-                },
-                "sex": {
-                    "type": "string"
-                },
-                "studentID": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             }
         },
@@ -1668,7 +1681,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "116.204.121.9:8088",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Drifting API",

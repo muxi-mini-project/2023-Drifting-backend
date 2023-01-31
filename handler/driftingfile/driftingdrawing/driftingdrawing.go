@@ -14,10 +14,10 @@ import (
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Param NewDrawing body model.DriftingDrawing true "新建漂流画"
+// @Param NewDrawing body model.CreateFile true "新建漂流画"
 // @Success 200 {object} handler.Response "{"message":"创建成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/driftingdrawing/create [post]
+// @Router /api/v1/drifting_drawing/create [post]
 func CreateDriftingDrawing(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var NewDrawing model.DriftingDrawing
@@ -43,7 +43,7 @@ func CreateDriftingDrawing(c *gin.Context) {
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.DriftingDrawing "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/driftingdrawing/create  [get]
+// @Router /api/v1/drifting_drawing/create  [get]
 func GetCreatedDriftingDrawings(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	notes, err := driftingfile.GetDriftingNotes(StudentID)
@@ -63,7 +63,7 @@ func GetCreatedDriftingDrawings(c *gin.Context) {
 // @Param Joining body model.JoinedDrifting true "要参加的漂流画"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/driftingdrawing/join [post]
+// @Router /api/v1/drifting_drawing/join [post]
 func JoinDriftingDrawing(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var Joining model.JoinedDrifting
@@ -89,7 +89,7 @@ func JoinDriftingDrawing(c *gin.Context) {
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.DriftingNote "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/driftingdrawing/join [get]
+// @Router /api/v1/drifting_drawing/join [get]
 func GetJoinedDriftingDrawings(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	drawings, err := driftingfile.GetJoinedDriftingDrawings(StudentID)
@@ -110,7 +110,7 @@ func GetJoinedDriftingDrawings(c *gin.Context) {
 // @Param id formData string true "id"
 // @Success 200 {object} handler.Response "{"message":"创建成功"}"
 // @Failure 400 {object} handler.Response "{"message":"创建失败"}"
-// @Router /api/v1/driftingdrawing/draw [post]
+// @Router /api/v1/drifting_drawing/draw [post]
 func DrawDriftingDrawing(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var NewContact model.DrawingContact
@@ -139,10 +139,11 @@ func DrawDriftingDrawing(c *gin.Context) {
 // @Tags driftingdrawing
 // @Accept  application/json
 // @Produce  application/json
-// @Param FDriftingNote body model.DriftingDrawing true "获取的ID"
+// @Param Authorization header string true "token"
+// @Param FDriftingNote body model.GetFileId true "获取的ID"
 // @Success 200 {object} model.DrawingInfo "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
-// @Router /api/v1/driftingdrawing/detail [get]
+// @Router /api/v1/drifting_drawing/detail [get]
 func GetDriftingDrawingDetail(c *gin.Context) {
 	var FDriftingDrawing model.DriftingDrawing
 	info, err := driftingfile.DriftingDrawingDetail(FDriftingDrawing)
@@ -162,7 +163,7 @@ func GetDriftingDrawingDetail(c *gin.Context) {
 // @Param NewInvite body model.Invite true "新建邀请"
 // @Success 200 {object} handler.Response "{"message":"邀请成功"}"
 // @Failure 400 {object} handler.Response "{"message":"邀请失败，你可能已邀请过该好友"}"
-// @Router /api/v1/driftingdawing/invite [post]
+// @Router /api/v1/drifting_drawing/invite [post]
 func InviteFriend(c *gin.Context) {
 	var NewInvite model.Invite
 	NewInvite.HostID = c.MustGet("student_id").(int64)
@@ -187,7 +188,7 @@ func InviteFriend(c *gin.Context) {
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.Invite "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取信息失败"}"
-// @Router /api/v1/driftingdrawing/invite [get]
+// @Router /api/v1/drifting_drawing/invite [get]
 func GetInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	invites, err := driftingfile.GetInvites(StudentID)
@@ -207,7 +208,7 @@ func GetInvite(c *gin.Context) {
 // @Param TheInvite body model.Invite true "拒绝邀请"
 // @Success 200 {object} handler.Response "{"message":"拒绝成功"}"
 // @Failure 400 {object} handler.Response "{"message":"拒绝失败"}"
-// @Router /api/v1/driftingdrawing/refuse [post]
+// @Router /api/v1/drifting_drawing/refuse [post]
 func RefuseInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var TheInvite model.Invite
@@ -233,7 +234,7 @@ func RefuseInvite(c *gin.Context) {
 // @Param Authorization header string true "token"
 // @Success 200 {object} model.DriftingDrawing "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
-// @Router /api/v1/driftingdrawing/recommendation [get]
+// @Router /api/v1/drifting_drawing/recommendation [get]
 func RandomRecommendation(c *gin.Context) {
 	TheNote, err := driftingfile.RandomRecommend()
 	if err != nil {
@@ -252,7 +253,7 @@ func RandomRecommendation(c *gin.Context) {
 // @Param TheInvite body model.Invite true "要通过的邀请"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/driftingdrawing/accept [post]
+// @Router /api/v1/drifting_drawing/accept [post]
 func AcceptInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var TheInvite model.Invite
