@@ -17,12 +17,12 @@ import (
 // @Description 一站式登录
 // @Accep application/json
 // @Produce application/json
-// @Param object body model.User true "登录用户信息"
+// @Param object body model.LoginRequest true "登录用户信息"
 // @Success 200 {object} handler.Response "{"msg":"将student_id作为token保留"}"
 // @Failure 401 {object} errno.Errno "{"error_code":"10001", "message":"Password or account wrong."} 身份认证失败 重新登录"
 // @Failure 400 {object} errno.Errno "{"error_code":"20001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
 // @Failure 500 {object} errno.Errno "{"error_code":"30001", "message":"Fail."} 失败"
-// @Router /login [post]
+// @Router /api/v1/login [post]
 func Login(c *gin.Context) {
 	var u model.User
 	if err := c.BindJSON(&u); err != nil {

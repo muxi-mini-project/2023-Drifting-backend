@@ -42,7 +42,7 @@ func UploadToQiNiu(file *multipart.FileHeader, folder string) (int, string) {
 	putExtra := storage.PutExtra{} // 额外参数
 
 	// 上传 自定义key，可以指定上传目录及文件名和后缀，
-	key := folder + file.Filename // 上传路径，如果当前目录中已存在相同文件，则返回上传失败错误
+	key := "drifting/" + folder + file.Filename // 上传路径，如果当前目录中已存在相同文件，则返回上传失败错误
 	err = formUploader.Put(context.Background(), &ret, upToken, key, src, file.Size, &putExtra)
 
 	// 以默认key方式上传
