@@ -42,6 +42,7 @@ type DriftingPicture struct {
 	Kind    string `json:"kind" gorm:"size:255"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-picture"`
 }
+
 type Draft struct {
 	gorm.Model
 	Name    string `json:"name" gorm:"size:255"`
@@ -51,6 +52,8 @@ type Draft struct {
 	Kind    string `json:"kind" gorm:"size:255" binding:"required"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
 }
+
+
 
 type NoteContact struct {
 	FileID   int64  `json:"file_id"`
