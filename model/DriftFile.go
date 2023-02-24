@@ -18,6 +18,7 @@ type DriftingNovel struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
+	Number  int    `json:"number"`
 	Kind    string `json:"kind" gorm:"size:255" binding:"required"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
 }
@@ -39,6 +40,7 @@ type DriftingPicture struct {
 	Contact string `json:"contact" gorm:"size:255"`
 	Cover   string `json:"cover" gorm:"size:255"`
 	OwnerID int64
+	Number  int    `json:"number" gorm:"size:255"`
 	Kind    string `json:"kind" gorm:"size:255"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-picture"`
 }
@@ -52,8 +54,6 @@ type Draft struct {
 	Kind    string `json:"kind" gorm:"size:255" binding:"required"`
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
 }
-
-
 
 type NoteContact struct {
 	FileID   int64  `json:"file_id"`
@@ -95,4 +95,40 @@ type CreateFile struct {
 	Cover  string `json:"cover" gorm:"size:255"`
 	Number int    `json:"number"`
 	Kind   string `json:"kind" gorm:"size:255"`
+}
+
+type NovelContact struct {
+	FileID   int64  `json:"file_id"`
+	WriterID int64  `json:"writer_id"`
+	Text     string `json:"text" gorm:"type:text"`
+}
+
+type NovelInfo struct {
+	Name     string
+	OwnerID  int64
+	Contacts []NoteContact `json:"contacts"`
+}
+
+type PictureContact struct {
+	FileID   int64  `json:"file_id"`
+	WriterID int64  `json:"writer_id"`
+	Picture  string `json:"picture" grom:"size:255"`
+}
+
+type PictureInfo struct {
+	Name     string
+	OwnerID  int64
+	Contacts []DrawingContact
+}
+
+type DraftContact struct {
+	FileID   int64  `json:"file_id"`
+	WriterID int64  `json:"writer_id"`
+	Text     string `json:"text" gorm:"type:text"`
+}
+
+type DraftInfo struct {
+	Name     string
+	OwnerID  int64
+	Contacts []NoteContact `json:"contacts"`
 }

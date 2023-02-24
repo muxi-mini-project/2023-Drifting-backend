@@ -91,7 +91,7 @@ func GetInvites(StudentID int64) ([]model.Invite, error) {
 	return invites, err
 }
 
-// RefuseInvite 拒绝漂流本邀请
+// RefuseNoteInvite 拒绝漂流本邀请
 func RefuseNoteInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
 	if err != nil {
@@ -107,8 +107,8 @@ func RefuseNoteInvite(TheInvite model.Invite) error {
 	return err
 }
 
-// RandomRecommend 随机推荐漂流本
-func RandomRecommend() (model.DriftingNote, error) {
+// RandomRecommendNote 随机推荐漂流本
+func RandomRecommendNote() (model.DriftingNote, error) {
 	var notes []model.DriftingNote
 	err := mysql.DB.Not("kind", "熟人模式").Find(&notes).Error
 	if err != nil {
@@ -123,7 +123,7 @@ func RandomRecommend() (model.DriftingNote, error) {
 		ret = v
 		break
 	}
-	for k, _ := range m1 {
+	for k := range m1 {
 		delete(m1, k)
 	}
 	return ret, nil

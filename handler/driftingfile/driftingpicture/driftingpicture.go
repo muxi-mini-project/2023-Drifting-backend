@@ -236,7 +236,7 @@ func RefuseInvite(c *gin.Context) {
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
 // @Router /api/v1/drifting_picture/recommendation [get]
 func RandomRecommendation(c *gin.Context) {
-	TheNote, err := driftingfile.RandomRecommend()
+	TheNote, err := driftingfile.RandomRecommendPicture()
 	if err != nil {
 		handler.SendBadResponse(c, "漂流照片推送失败", err)
 		return

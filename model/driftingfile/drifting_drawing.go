@@ -24,7 +24,7 @@ func JoinNewDriftingDrawing(Joining model.JoinedDrifting) error {
 	return errno.ErrDatabase
 }
 
-// DrawiDrawing 创作漂流画
+// DrawDrawing 创作漂流画
 func DrawDrawing(StudentID int64, NewDrawingContact model.DrawingContact, f *multipart.FileHeader) error {
 	NewDrawingContact.WriterID = StudentID
 	_, url := qiniu.UploadToQiNiu(f, "drifting_drawing/")
@@ -49,6 +49,7 @@ func RefuseDrawingInvite(TheInvite model.Invite) error {
 	return err
 }
 
+// DriftingDrawingDetail 获取漂流画详情
 func DriftingDrawingDetail(FD model.DriftingDrawing) (model.DrawingInfo, error) {
 	var info model.DrawingInfo
 	err := mysql.DB.Where(&FD).First(&FD).Error
@@ -64,7 +65,7 @@ func DriftingDrawingDetail(FD model.DriftingDrawing) (model.DrawingInfo, error) 
 	return info, nil
 }
 
-// GetJoinedDriftingDrawings 获取某人加入的漂流本
+// GetJoinedDriftingDrawings 获取某人加入的漂流画
 func GetJoinedDriftingDrawings(StudentID int64) ([]model.DriftingDrawing, error) {
 	var drawings []model.DriftingDrawing
 	var Joined []model.JoinedDrifting
@@ -83,4 +84,26 @@ func GetJoinedDriftingDrawings(StudentID int64) ([]model.DriftingDrawing, error)
 		}
 	}
 	return drawings, nil
+}
+
+// RandomRecommendDrawing 随机推荐漂流画
+func RandomRecommendDrawing() (model.DriftingDrawing, error) {
+	var drawings []model.DriftingDrawing
+	err := mysql.DB.Not("kind", "熟人模式").Find(&drawings).Error
+	if err != nil {
+		return model.DriftingDrawing{}, err
+	}
+	m1 := make(map[int]model.DriftingDrawing)
+	for i := 0; i < len(drawings); i++ {
+		m1[i] = drawings[i]
+	}
+	var ret model.DriftingDrawing
+	for _, v := range m1 {
+		ret = v
+		break
+	}
+	for k := range m1 {
+		delete(m1, k)
+	}
+	return ret, nil
 }

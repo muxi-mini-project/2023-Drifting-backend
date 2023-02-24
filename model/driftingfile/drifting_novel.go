@@ -74,24 +74,7 @@ func GetNovelInfo(FD model.DriftingNovel) (model.NovelInfo, error) {
 	return info, nil
 }
 
-// CreateInvite 创建创作邀请
-func CreateInvite(NewInvite model.Invite) error {
-	err := mysql.DB.Where(&NewInvite).First(&NewInvite).Error
-	if err != nil {
-		err = mysql.DB.Create(&NewInvite).Error
-		return err
-	}
-	return errno.ErrDatabase
-}
-
-// GetInvites 获取邀请信息
-func GetInvites(StudentID int64) ([]model.Invite, error) {
-	var invites []model.Invite
-	err := mysql.DB.Where("friend_id = ?", StudentID).Find(&invites).Error
-	return invites, err
-}
-
-// RefuseInvite 拒绝漂流小说邀请
+// RefuseNovelInvite 拒绝漂流小说邀请
 func RefuseNovelInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
 	if err != nil {
@@ -107,8 +90,8 @@ func RefuseNovelInvite(TheInvite model.Invite) error {
 	return err
 }
 
-// RandomRecommend 随机推荐漂流小说
-func RandomRecommend() (model.DriftingNovel, error) {
+// RandomRecommendNovel 随机推荐漂流小说
+func RandomRecommendNovel() (model.DriftingNovel, error) {
 	var novels []model.DriftingNovel
 	err := mysql.DB.Not("kind", "熟人模式").Find(&novels).Error
 	if err != nil {
@@ -123,14 +106,8 @@ func RandomRecommend() (model.DriftingNovel, error) {
 		ret = v
 		break
 	}
-	for k, _ := range m1 {
+	for k := range m1 {
 		delete(m1, k)
 	}
 	return ret, nil
-}
-
-// AcceptTheInvite 接受邀请
-func AcceptTheInvite(TheInvite model.Invite) error {
-	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
-	return err
 }
