@@ -15,7 +15,7 @@ import (
 // @Summary 登录
 // @Tags user
 // @Description 一站式登录
-// @Accep application/json
+// @Accept application/json
 // @Produce application/json
 // @Param object body model.LoginRequest true "登录用户信息"
 // @Success 200 {object} handler.Response "{"msg":"将student_id作为token保留"}"

@@ -3,6 +3,8 @@ package router
 import (
 	"Drifting/handler/driftingfile/driftingdrawing"
 	"Drifting/handler/driftingfile/driftingnote"
+	"Drifting/handler/driftingfile/driftingpicture"
+	driftingnovel "Drifting/handler/driftingfile/driftnovel"
 	"Drifting/handler/user"
 	"Drifting/handler/user/friend"
 	"Drifting/router/middleware"
@@ -34,6 +36,7 @@ func RouterInit() *gin.Engine {
 	}
 
 	//漂流本路由
+
 	DriftingNoteGroup := e.Group("/api/v1/drifting_note").Use(middleware.Auth())
 	{
 		DriftingNoteGroup.POST("/create", driftingnote.CreateDriftingNote)          //创建漂流本*
@@ -65,5 +68,37 @@ func RouterInit() *gin.Engine {
 		DriftingDrawingGroup.GET("/recommendation", driftingdrawing.RandomRecommendation) //随机推送
 	}
 
+	//漂流相机路由
+	DriftingPictureGroup := e.Group("/api/v1/drifting_picture").Use(middleware.Auth())
+	{
+		DriftingPictureGroup.POST("/create", driftingpicture.CreateDriftingPicture)
+		DriftingPictureGroup.GET("/create", driftingpicture.GetCreatedDriftingPictures)
+		DriftingPictureGroup.POST("/join", driftingpicture.JoinDriftingPicture)
+		DriftingPictureGroup.GET("/join", driftingpicture.GetJoinedDriftingPictures)
+		DriftingPictureGroup.POST("/draw", driftingpicture.DrawDriftingPicture)
+		DriftingPictureGroup.GET("/detail", driftingpicture.GetDriftingPictureDetail)
+		DriftingPictureGroup.POST("/invite", driftingpicture.InviteFriend)
+		DriftingPictureGroup.GET("/invite", driftingpicture.GetInvite)
+		DriftingPictureGroup.POST("/refuse", driftingpicture.RefuseInvite)
+		DriftingPictureGroup.GET("/recommendation", driftingpicture.RandomRecommendation)
+		DriftingPictureGroup.POST("/accept", driftingpicture.AcceptInvite)
+	}
+
+	// 漂流小说路由
+	DriftingNovelGroup := e.Group("/api/v1/drifting_novel").Use(middleware.Auth())
+	{
+		DriftingNovelGroup.POST("/create", driftingnovel.CreateDriftingNovel)
+		DriftingNovelGroup.POST("/write", driftingnovel.WriteDriftingNovel)
+		DriftingNovelGroup.GET("/create", driftingnovel.GetCreatedDriftingNovels)
+		DriftingNovelGroup.POST("/join", driftingnovel.JoinDrifting)
+		DriftingNovelGroup.GET("/join", driftingnovel.GetJoinedDriftingNovels)
+		DriftingNovelGroup.GET("/detail", driftingnovel.GetDriftingNovelDetail)
+		DriftingNovelGroup.POST("/invite", driftingnovel.InviteFriend)
+		DriftingNovelGroup.GET("/invite", driftingnovel.GetInvite)
+		DriftingNovelGroup.POST("/refuse", driftingnovel.RefuseInvite)
+		DriftingNovelGroup.GET("/recommendation", driftingnovel.RandomRecommendation)
+		DriftingNovelGroup.POST("/accept", driftingnovel.AcceptInvite)
+
+	}
 	return e
 }

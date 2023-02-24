@@ -84,3 +84,25 @@ func GetJoinedDriftingPictures(StudentID int64) ([]model.DriftingPicture, error)
 	}
 	return pictures, nil
 }
+
+// RandomRecommendPicture 随机推荐漂流相片
+func RandomRecommendPicture() (model.DriftingPicture, error) {
+	var pictures []model.DriftingPicture
+	err := mysql.DB.Not("kind", "熟人模式").Find(&pictures).Error
+	if err != nil {
+		return model.DriftingPicture{}, err
+	}
+	m1 := make(map[int]model.DriftingPicture)
+	for i := 0; i < len(pictures); i++ {
+		m1[i] = pictures[i]
+	}
+	var ret model.DriftingPicture
+	for _, v := range m1 {
+		ret = v
+		break
+	}
+	for k, _ := range m1 {
+		delete(m1, k)
+	}
+	return ret, nil
+}
