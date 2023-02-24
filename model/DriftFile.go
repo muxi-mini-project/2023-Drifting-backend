@@ -43,6 +43,18 @@ type DriftingPicture struct {
 	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-picture"`
 }
 
+type Draft struct {
+	gorm.Model
+	Name    string `json:"name" gorm:"size:255"`
+	Contact string `json:"contact" gorm:"size:255"`
+	Cover   string `json:"cover" gorm:"size:255"`
+	OwnerID int64
+	Kind    string `json:"kind" gorm:"size:255" binding:"required"`
+	//Writers []JoinedDrifting `gorm:"many2many:joined-drifting_drifting-novel"`
+}
+
+
+
 type NoteContact struct {
 	FileID   int64  `json:"file_id"`
 	WriterID int64  `json:"writer_id"`
