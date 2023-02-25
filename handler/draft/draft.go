@@ -3,8 +3,7 @@ package draft
 import (
 	"Drifting/handler"
 	"Drifting/model"
-	"Drifting/model/driftingfile"
-
+	"Drifting/model/draft"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +16,7 @@ import (
 // @Param Draft body model.CreateFile true "新建草稿箱信息"
 // @Success 200 {object} handler.Response "{"message":"创建成功"}"
 // @Failure 400 {object} handler.Response "{"message":"创建失败"}"
-// @Router /api/v1/drifting_note/create [post]
+// @Router /api/v1/draft/create [post]
 func CreateDraft(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var NewDraft model.Draft
@@ -26,7 +25,7 @@ func CreateDraft(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息出错", err)
 		return
 	}
-	err = driftingfile.CreateDraft(StudentID, NewDraft)
+	err = draft.CreateDraft(StudentID, NewDraft)
 	if err != nil {
 		handler.SendBadResponse(c, "创建出错", err)
 		return
@@ -43,16 +42,16 @@ func CreateDraft(c *gin.Context) {
 // @Param NewContact body model.NoteContact true "内容"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/drifting_note/write [post]
+// @Router /api/v1/draft/write [post]
 func WriteDraft(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	var NewContact model.NoteContact
+	var NewContact model.DraftContact
 	err := c.BindJSON(&NewContact)
 	if err != nil {
 		handler.SendBadResponse(c, "获取数据出错", err)
 		return
 	}
-	err = driftingfile.WriteDraft(StudentID, NewContact)
+	err = draft.WriteDraft(StudentID, NewContact)
 	if err != nil {
 		handler.SendBadResponse(c, "存储失败", err)
 		return
@@ -68,10 +67,10 @@ func WriteDraft(c *gin.Context) {
 // @Param Authorization header string true "token"
 // @Success 200 {object} []model.Draft "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
-// @Router /api/v1/drifting_note/create  [get]
+// @Router /api/v1/draft/create  [get]
 func GetCreatedDrafts(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	notes, err := driftingfile.GetDrafts(StudentID)
+	notes, err := draft.GetDrafts(StudentID)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
 		return

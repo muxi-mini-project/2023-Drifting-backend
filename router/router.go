@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Drifting/handler/draft"
 	"Drifting/handler/driftingfile/driftingdrawing"
 	"Drifting/handler/driftingfile/driftingnote"
 	"Drifting/handler/driftingfile/driftingpicture"
@@ -98,7 +99,14 @@ func RouterInit() *gin.Engine {
 		DriftingNovelGroup.POST("/refuse", driftingnovel.RefuseInvite)
 		DriftingNovelGroup.GET("/recommendation", driftingnovel.RandomRecommendation)
 		DriftingNovelGroup.POST("/accept", driftingnovel.AcceptInvite)
+	}
 
+	// 草稿箱路由
+	DraftGroup := e.Group("/api/v1/draft")
+	{
+		DraftGroup.POST("/create", draft.CreateDraft)
+		DraftGroup.POST("/write", draft.WriteDraft)
+		DraftGroup.GET("/create", draft.GetCreatedDrafts)
 	}
 	return e
 }
