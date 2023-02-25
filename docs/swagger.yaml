@@ -40,6 +40,29 @@ definitions:
       number:
         type: integer
     type: object
+  model.Draft:
+    properties:
+      contact:
+        type: string
+      cover:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      kind:
+        type: string
+      name:
+        type: string
+      ownerID:
+        type: integer
+      updatedAt:
+        type: string
+    required:
+    - kind
+    type: object
   model.DrawingContact:
     properties:
       file_id:
@@ -85,6 +108,54 @@ definitions:
     type: object
   model.DriftingNote:
     properties:
+      cover:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      kind:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+      ownerID:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  model.DriftingNovel:
+    properties:
+      contact:
+        type: string
+      cover:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      kind:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+      ownerID:
+        type: integer
+      updatedAt:
+        type: string
+    required:
+    - kind
+    type: object
+  model.DriftingPicture:
+    properties:
+      contact:
+        type: string
       cover:
         type: string
       createdAt:
@@ -163,6 +234,37 @@ definitions:
       ownerID:
         type: integer
     type: object
+  model.NovelContact:
+    properties:
+      file_id:
+        type: integer
+      text:
+        type: string
+      writer_id:
+        type: integer
+    type: object
+  model.NovelInfo:
+    properties:
+      contacts:
+        items:
+          $ref: '#/definitions/model.NoteContact'
+        type: array
+      name:
+        type: string
+      ownerID:
+        type: integer
+    type: object
+  model.PictureInfo:
+    properties:
+      contacts:
+        items:
+          $ref: '#/definitions/model.DrawingContact'
+        type: array
+      name:
+        type: string
+      ownerID:
+        type: integer
+    type: object
   model.UserAndFriends:
     properties:
       friendId:
@@ -181,7 +283,7 @@ definitions:
       sex:
         type: string
     type: object
-host: 116.204.121.9:8088
+host: 116.204.121.9:61583
 info:
   contact:
     email: SJMbaiyang@163.com
@@ -191,6 +293,94 @@ info:
   title: Drifting API
   version: "1.0"
 paths:
+  /api/v1/draft/create:
+    get:
+      consumes:
+      - application/json
+      description: 获取对应用户创建的草稿箱
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.Draft'
+            type: array
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户草稿箱
+      tags:
+      - draft
+    post:
+      consumes:
+      - application/json
+      description: 创建草稿箱
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建草稿箱信息
+        in: body
+        name: Draft
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateFile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"创建成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"创建失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 创建草稿箱
+      tags:
+      - draft
+  /api/v1/draft/write:
+    post:
+      consumes:
+      - application/json
+      description: 加入草稿,需要在json中添加名为
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 内容
+        in: body
+        name: NewContact
+        required: true
+        schema:
+          $ref: '#/definitions/model.NoteContact'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"Success"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 加入草稿(写内容)
+      tags:
+      - draft
   /api/v1/drifting_drawing/accept:
     post:
       consumes:
@@ -835,6 +1025,650 @@ paths:
       summary: 参与漂流本创作(写内容)
       tags:
       - driftingnote
+  /api/v1/drifting_novel/accept:
+    post:
+      consumes:
+      - application/json
+      description: 接受好友创作邀请，注：该接口仅负责删除对应邀请记录，后续操作需调用参与创作接口
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要通过的邀请
+        in: body
+        name: TheInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"Success"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 接受创作邀请
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/create:
+    get:
+      consumes:
+      - application/json
+      description: 获取对应用户创建的漂流小说
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.DriftingNovel'
+            type: array
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户漂流小说
+      tags:
+      - driftingnovel
+    post:
+      consumes:
+      - application/json
+      description: 创建漂流小说,kind必备，且只能为"熟人模式"和"生人模式"，否则将无法进行筛选及推送
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建漂流小说信息
+        in: body
+        name: DriftingNovel
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateFile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"创建成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"创建失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 创建漂流小说
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/detail:
+    get:
+      consumes:
+      - application/json
+      description: 获取漂流小说内容，需在json中提供漂流小说的ID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 获取的ID
+        in: body
+        name: FDriftingNovel
+        required: true
+        schema:
+          $ref: '#/definitions/model.DriftingNovel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/model.NovelInfo'
+        "400":
+          description: '{"message":"获取失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取漂流小说内容
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/invite:
+    get:
+      consumes:
+      - application/json
+      description: 获取该用户的邀请信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.Invite'
+            type: array
+        "400":
+          description: '{"message":"获取信息失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取邀请信息
+      tags:
+      - driftingnovel
+    post:
+      consumes:
+      - application/json
+      description: 邀请好友创作，需在json中提供好友学号，漂流小说ID，及文件类型(漂流小说需注明是DriftingNovel)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建邀请
+        in: body
+        name: NewInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"邀请成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"邀请失败，你可能已邀请过该好友"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 邀请好友进行创作
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/join:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户参加得漂流小说信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.DriftingNovel'
+            type: array
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户参加的漂流小说信息
+      tags:
+      - driftingnovel
+    post:
+      consumes:
+      - application/json
+      description: 参加漂流小说创作
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要参加的漂流小说
+        in: body
+        name: Joined
+        required: true
+        schema:
+          $ref: '#/definitions/model.JoinedDrifting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"参加成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 参加漂流小说创作
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/recommendation:
+    get:
+      consumes:
+      - application/json
+      description: 随机推荐一个漂流小说
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/model.DriftingNovel'
+        "400":
+          description: '{"message":"获取失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 随机推荐漂流小说
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/refuse:
+    post:
+      consumes:
+      - application/json
+      description: 拒绝创作邀请
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 拒绝邀请
+        in: body
+        name: TheInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"拒绝成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"拒绝失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 拒绝邀请
+      tags:
+      - driftingnovel
+  /api/v1/drifting_novel/write:
+    post:
+      consumes:
+      - application/json
+      description: 参与漂流小说创作,需要在json中添加名为
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 写的内容
+        in: body
+        name: NewContact
+        required: true
+        schema:
+          $ref: '#/definitions/model.NovelContact'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"Success"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 参与漂流小说创作(写内容)
+      tags:
+      - driftingnovel
+  /api/v1/drifting_picture/accept:
+    post:
+      consumes:
+      - application/json
+      description: 接受好友创作邀请，注：该接口仅负责删除对应邀请记录，后续操作需调用参与创作接口
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要通过的邀请
+        in: body
+        name: TheInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"Success"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 接受创作邀请
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/create:
+    get:
+      consumes:
+      - application/json
+      description: 获取对应用户创建的漂流照片
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.DriftingPicture'
+            type: array
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户漂流照片
+      tags:
+      - driftingpicture
+    post:
+      consumes:
+      - application/json
+      description: 创建漂流照片
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建漂流照片
+        in: body
+        name: NewPicture
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateFile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"创建成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 创建漂流照片
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/detail:
+    get:
+      consumes:
+      - application/json
+      description: 获取漂流本内容，需在json中提供漂流照片的ID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 获取的ID
+        in: body
+        name: FDriftingNote
+        required: true
+        schema:
+          $ref: '#/definitions/model.GetFileId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/model.PictureInfo'
+        "400":
+          description: '{"message":"获取失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取漂流照片内容
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/draw:
+    post:
+      consumes:
+      - application/json
+      description: 创作漂流照片
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 内容
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: id
+        in: formData
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"创建成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"创建失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 创作漂流照片
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/invite:
+    get:
+      consumes:
+      - application/json
+      description: 获取该用户的邀请信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.Invite'
+            type: array
+        "400":
+          description: '{"message":"获取信息失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取邀请信息
+      tags:
+      - driftingpicture
+    post:
+      consumes:
+      - application/json
+      description: 邀请好友创作，需在json中提供好友学号，漂流本ID，及文件类型(漂流本需注明是DriftingNote)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 新建邀请
+        in: body
+        name: NewInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"邀请成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"邀请失败，你可能已邀请过该好友"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 邀请好友进行创作
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/join:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户参加得漂流照片信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            items:
+              $ref: '#/definitions/model.DriftingNote'
+            type: array
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户参加的漂流照片信息
+      tags:
+      - driftingpicture
+    post:
+      consumes:
+      - application/json
+      description: 参加漂流照片创作(仅参加)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要参加的漂流照片
+        in: body
+        name: Joining
+        required: true
+        schema:
+          $ref: '#/definitions/model.JoinedDrifting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"Success"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 参加漂流照片创作(仅参加)
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/recommendation:
+    get:
+      consumes:
+      - application/json
+      description: 随机推荐一个漂流照片
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/model.DriftingPicture'
+        "400":
+          description: '{"message":"获取失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 随机推荐漂流照片
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/refuse:
+    post:
+      consumes:
+      - application/json
+      description: 拒绝创作邀请
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 拒绝邀请
+        in: body
+        name: TheInvite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Invite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"拒绝成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"拒绝失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 拒绝邀请
+      tags:
+      - driftingpicture
   /api/v1/friend/add:
     post:
       consumes:
@@ -984,6 +1818,8 @@ paths:
       - friend
   /api/v1/login:
     post:
+      consumes:
+      - application/json
       description: 一站式登录
       parameters:
       - description: 登录用户信息

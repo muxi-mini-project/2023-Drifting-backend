@@ -102,7 +102,7 @@ func RouterInit() *gin.Engine {
 	}
 
 	// 草稿箱路由
-	DraftGroup := e.Group("/api/v1/draft")
+	DraftGroup := e.Group("/api/v1/draft").Use(middleware.Auth())
 	{
 		DraftGroup.POST("/create", draft.CreateDraft)
 		DraftGroup.POST("/write", draft.WriteDraft)
