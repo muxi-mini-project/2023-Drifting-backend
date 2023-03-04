@@ -50,18 +50,22 @@ definitions:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
+      file_kind:
+        type: string
       id:
         type: integer
       kind:
-        type: string
+        type: integer
       name:
         type: string
       ownerID:
         type: integer
+      theme:
+        type: string
       updatedAt:
         type: string
     required:
-    - kind
+    - file_kind
     type: object
   model.DrawingContact:
     properties:
@@ -96,13 +100,15 @@ definitions:
       id:
         type: integer
       kind:
-        type: string
+        type: integer
       name:
         type: string
       number:
         type: integer
       ownerID:
         type: integer
+      theme:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -117,13 +123,15 @@ definitions:
       id:
         type: integer
       kind:
-        type: string
+        type: integer
       name:
         type: string
       number:
         type: integer
       ownerID:
         type: integer
+      theme:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -140,13 +148,15 @@ definitions:
       id:
         type: integer
       kind:
-        type: string
+        type: integer
       name:
         type: string
       number:
         type: integer
       ownerID:
         type: integer
+      theme:
+        type: string
       updatedAt:
         type: string
     required:
@@ -165,13 +175,15 @@ definitions:
       id:
         type: integer
       kind:
-        type: string
+        type: integer
       name:
         type: string
       number:
         type: integer
       ownerID:
         type: integer
+      theme:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -350,6 +362,37 @@ paths:
       summary: 创建草稿箱
       tags:
       - draft
+  /api/v1/draft/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定草稿箱
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的草稿箱
+        in: body
+        name: TheDraft
+        required: true
+        schema:
+          $ref: '#/definitions/model.Draft'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 删除草稿箱
+      tags:
+      - draft
   /api/v1/draft/write:
     post:
       consumes:
@@ -467,6 +510,37 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: 创建漂流画
+      tags:
+      - driftingdrawing
+  /api/v1/drifting_drawing/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定漂流画
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的漂流画
+        in: body
+        name: TheDrawing
+        required: true
+        schema:
+          $ref: '#/definitions/model.DriftingDrawing'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 删除漂流画
       tags:
       - driftingdrawing
   /api/v1/drifting_drawing/detail:
@@ -793,6 +867,37 @@ paths:
       summary: 创建漂流本
       tags:
       - driftingnote
+  /api/v1/drifting_note/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定漂流本
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的漂流本
+        in: body
+        name: TheNote
+        required: true
+        schema:
+          $ref: '#/definitions/model.DriftingNote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 删除漂流本
+      tags:
+      - driftingnote
   /api/v1/drifting_note/detail:
     get:
       consumes:
@@ -1113,6 +1218,37 @@ paths:
       summary: 创建漂流小说
       tags:
       - driftingnovel
+  /api/v1/drifting_novel/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定漂流小说
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的漂流小说
+        in: body
+        name: ThePicture
+        required: true
+        schema:
+          $ref: '#/definitions/model.DriftingPicture'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 删除漂流小说
+      tags:
+      - driftingnovel
   /api/v1/drifting_novel/detail:
     get:
       consumes:
@@ -1431,6 +1567,37 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: 创建漂流照片
+      tags:
+      - driftingpicture
+  /api/v1/drifting_picture/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定漂流相片
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的漂流相片
+        in: body
+        name: ThePicture
+        required: true
+        schema:
+          $ref: '#/definitions/model.DriftingPicture'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 删除漂流相片
       tags:
       - driftingpicture
   /api/v1/drifting_picture/detail:
@@ -1774,7 +1941,7 @@ paths:
         name: UserAndFriends
         required: true
         schema:
-          $ref: '#/definitions/model.UserAndFriends'
+          $ref: '#/definitions/model.AddingFriend'
       produces:
       - application/json
       responses:
@@ -1853,7 +2020,7 @@ paths:
       tags:
       - user
   /api/v1/user/avatar:
-    put:
+    post:
       consumes:
       - application/json
       description: 更新用户头像
@@ -1908,7 +2075,7 @@ paths:
       tags:
       - user
   /api/v1/user/update:
-    put:
+    post:
       consumes:
       - application/json
       description: 更新用户信息

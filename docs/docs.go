@@ -106,6 +106,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/draft/delete": {
+            "delete": {
+                "description": "删除指定草稿箱",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "draft"
+                ],
+                "summary": "删除草稿箱",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的草稿箱",
+                        "name": "TheDraft",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Draft"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"删除失败，您有可能不是该文件的主人，或者该文件不存在\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/draft/write": {
             "post": {
                 "description": "加入草稿,需要在json中添加名为",
@@ -279,6 +326,53 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "{\"message\":\"Failure\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/drifting_drawing/delete": {
+            "delete": {
+                "description": "删除指定漂流画",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "driftingdrawing"
+                ],
+                "summary": "删除漂流画",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的漂流画",
+                        "name": "TheDrawing",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DriftingDrawing"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"删除失败，您有可能不是该文件的主人，或者该文件不存在\"}",
                         "schema": {
                             "$ref": "#/definitions/Response"
                         }
@@ -775,6 +869,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/drifting_note/delete": {
+            "delete": {
+                "description": "删除指定漂流本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "driftingnote"
+                ],
+                "summary": "删除漂流本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的漂流本",
+                        "name": "TheNote",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DriftingNote"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"删除失败，您有可能不是该文件的主人，或者该文件不存在\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/drifting_note/detail": {
             "get": {
                 "description": "获取漂流本内容，需在json中提供漂流本的ID",
@@ -1259,6 +1400,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/drifting_novel/delete": {
+            "delete": {
+                "description": "删除指定漂流小说",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "driftingnovel"
+                ],
+                "summary": "删除漂流小说",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的漂流小说",
+                        "name": "ThePicture",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DriftingPicture"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"删除失败，您有可能不是该文件的主人，或者该文件不存在\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/drifting_novel/detail": {
             "get": {
                 "description": "获取漂流小说内容，需在json中提供漂流小说的ID",
@@ -1736,6 +1924,53 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "{\"message\":\"Failure\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/drifting_picture/delete": {
+            "delete": {
+                "description": "删除指定漂流相片",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "driftingpicture"
+                ],
+                "summary": "删除漂流相片",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的漂流相片",
+                        "name": "ThePicture",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DriftingPicture"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"删除失败，您有可能不是该文件的主人，或者该文件不存在\"}",
                         "schema": {
                             "$ref": "#/definitions/Response"
                         }
@@ -2261,7 +2496,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserAndFriends"
+                            "$ref": "#/definitions/model.AddingFriend"
                         }
                     }
                 ],
@@ -2375,7 +2610,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/user/avatar": {
-            "put": {
+            "post": {
                 "description": "更新用户头像",
                 "consumes": [
                     "application/json"
@@ -2458,7 +2693,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/user/update": {
-            "put": {
+            "post": {
                 "description": "更新用户信息",
                 "consumes": [
                     "application/json"
@@ -2570,7 +2805,7 @@ const docTemplate = `{
         "model.Draft": {
             "type": "object",
             "required": [
-                "kind"
+                "file_kind"
             ],
             "properties": {
                 "contact": {
@@ -2585,17 +2820,23 @@ const docTemplate = `{
                 "deletedAt": {
                     "$ref": "#/definitions/gorm.DeletedAt"
                 },
+                "file_kind": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
                 "ownerID": {
                     "type": "integer"
+                },
+                "theme": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2652,7 +2893,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -2662,6 +2903,9 @@ const docTemplate = `{
                 },
                 "ownerID": {
                     "type": "integer"
+                },
+                "theme": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2684,7 +2928,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -2694,6 +2938,9 @@ const docTemplate = `{
                 },
                 "ownerID": {
                     "type": "integer"
+                },
+                "theme": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2722,7 +2969,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -2732,6 +2979,9 @@ const docTemplate = `{
                 },
                 "ownerID": {
                     "type": "integer"
+                },
+                "theme": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2757,7 +3007,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -2767,6 +3017,9 @@ const docTemplate = `{
                 },
                 "ownerID": {
                     "type": "integer"
+                },
+                "theme": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

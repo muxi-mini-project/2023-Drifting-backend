@@ -51,6 +51,7 @@ func RouterInit() *gin.Engine {
 		DriftingNoteGroup.POST("/refuse", driftingnote.RefuseInvite)                //拒绝创作邀请*
 		DriftingNoteGroup.POST("/accept", driftingnote.AcceptInvite)                //接受创作邀请*
 		DriftingNoteGroup.GET("/recommendation", driftingnote.RandomRecommendation) //随机推送*
+		DriftingNoteGroup.DELETE("/delete", driftingnote.DeleteNote)                //删除漂流本
 	}
 
 	//漂流画路由
@@ -67,6 +68,7 @@ func RouterInit() *gin.Engine {
 		DriftingDrawingGroup.POST("/refuse", driftingdrawing.RefuseInvite)                //拒绝创作邀请
 		DriftingDrawingGroup.POST("/accept", driftingdrawing.AcceptInvite)                //接受创作邀请
 		DriftingDrawingGroup.GET("/recommendation", driftingdrawing.RandomRecommendation) //随机推送
+		DriftingDrawingGroup.DELETE("/delete", driftingdrawing.DeleteDrawing)             //删除漂流画
 	}
 
 	//漂流相机路由
@@ -83,6 +85,7 @@ func RouterInit() *gin.Engine {
 		DriftingPictureGroup.POST("/refuse", driftingpicture.RefuseInvite)
 		DriftingPictureGroup.GET("/recommendation", driftingpicture.RandomRecommendation)
 		DriftingPictureGroup.POST("/accept", driftingpicture.AcceptInvite)
+		DriftingPictureGroup.DELETE("/delete", driftingpicture.DeletePicture)
 	}
 
 	// 漂流小说路由
@@ -99,6 +102,7 @@ func RouterInit() *gin.Engine {
 		DriftingNovelGroup.POST("/refuse", driftingnovel.RefuseInvite)
 		DriftingNovelGroup.GET("/recommendation", driftingnovel.RandomRecommendation)
 		DriftingNovelGroup.POST("/accept", driftingnovel.AcceptInvite)
+		DriftingNovelGroup.DELETE("/delete", driftingnovel.DeletePicture)
 	}
 
 	// 草稿箱路由
@@ -107,6 +111,7 @@ func RouterInit() *gin.Engine {
 		DraftGroup.POST("/create", draft.CreateDraft)
 		DraftGroup.POST("/write", draft.WriteDraft)
 		DraftGroup.GET("/create", draft.GetCreatedDrafts)
+		DraftGroup.DELETE("/delete", draft.DeleteDraft)
 	}
 
 	//e.POST("api/v1/test", func(c *gin.Context) {

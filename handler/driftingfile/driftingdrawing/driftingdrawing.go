@@ -47,12 +47,12 @@ func CreateDriftingDrawing(c *gin.Context) {
 // @Router /api/v1/drifting_drawing/create  [get]
 func GetCreatedDriftingDrawings(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	notes, err := driftingfile.GetDriftingNotes(StudentID)
+	drawings, err := driftingfile.GetDriftingDrawing(StudentID)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
 		return
 	}
-	handler.SendGoodResponse(c, "获取成功", notes)
+	handler.SendGoodResponse(c, "获取成功", drawings)
 }
 
 // @Summary 参加漂流画创作(仅参加)
@@ -115,7 +115,7 @@ func GetJoinedDriftingDrawings(c *gin.Context) {
 func DrawDriftingDrawing(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var NewContact model.DrawingContact
-	a := c.Param("file_id")
+	a := c.PostForm("file_id")
 	b, err := strconv.Atoi(a)
 	if err != nil {
 		handler.SendBadResponse(c, "出错", err)
@@ -147,6 +147,7 @@ func DrawDriftingDrawing(c *gin.Context) {
 // @Router /api/v1/drifting_drawing/detail [get]
 func GetDriftingDrawingDetail(c *gin.Context) {
 	var FDriftingDrawing model.DriftingDrawing
+	c.BindJSON(&FDriftingDrawing)
 	info, err := driftingfile.DriftingDrawingDetail(FDriftingDrawing)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
@@ -192,7 +193,7 @@ func InviteFriend(c *gin.Context) {
 // @Router /api/v1/drifting_drawing/invite [get]
 func GetInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	invites, err := driftingfile.GetInvites(StudentID)
+	invites, err := driftingfile.GetInvites(StudentID, 1)
 	if err != nil {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
@@ -270,4 +271,31 @@ func AcceptInvite(c *gin.Context) {
 		return
 	}
 	handler.SendGoodResponse(c, "通过成功", nil)
+}
+
+// @Summary 删除漂流画
+// @Description 删除指定漂流画
+// @Tags driftingdrawing
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param TheDrawing body model.DriftingDrawing true "要删除的漂流画"
+// @Success 200 {object} handler.Response "{"message":"删除成功"}"
+// @Failure 400 {object} handler.Response "{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}"
+// @Router /api/v1/drifting_drawing/delete [delete]
+func DeleteDrawing(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var DLDrawing model.DriftingDrawing
+	err := c.BindJSON(&DLDrawing)
+	DLDrawing.OwnerID = StudentID
+	if err != nil {
+		handler.SendBadResponse(c, "获取id出错", err)
+		return
+	}
+	err = driftingfile.DeleteDrawing(DLDrawing)
+	if err != nil {
+		handler.SendBadResponse(c, "删除失败，您有可能不是该文件的主人，或者该文件不存在", err)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", err)
 }

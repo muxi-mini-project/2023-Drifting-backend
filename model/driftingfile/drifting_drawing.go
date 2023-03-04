@@ -22,6 +22,12 @@ func CreateNewDriftingDrawing(NewDrawing model.DriftingDrawing) (error, uint) {
 	return err, FindDrawing.ID
 }
 
+func GetDriftingDrawing(StudentID int64) ([]model.DriftingDrawing, error) {
+	var drawings []model.DriftingDrawing
+	err := mysql.DB.Where("owner_id=?", StudentID).Find(&drawings).Error
+	return drawings, err
+}
+
 // JoinNewDriftingDrawing 参加漂流画
 func JoinNewDriftingDrawing(Joining model.JoinedDrifting) error {
 	err := mysql.DB.Where(&Joining).First(&Joining).Error
@@ -84,7 +90,7 @@ func GetJoinedDriftingDrawings(StudentID int64) ([]model.DriftingDrawing, error)
 	for _, v := range Joined {
 		if v.DriftingNoteID != 0 {
 			var a model.DriftingDrawing
-			err = mysql.DB.Where("id = ?", v.DriftingNoteID).First(&a).Error
+			err = mysql.DB.Where("id = ?", v.DriftingDrawingID).First(&a).Error
 			if err != nil {
 				return nil, err
 			}
@@ -114,4 +120,10 @@ func RandomRecommendDrawing() (model.DriftingDrawing, error) {
 		delete(m1, k)
 	}
 	return ret, nil
+}
+
+// DeleteDrawing 删除漂流画
+func DeleteDrawing(DLDrawing model.DriftingDrawing) error {
+	err := mysql.DB.Where(&DLDrawing).Delete(&DLDrawing).Error
+	return err
 }

@@ -119,3 +119,9 @@ func RandomRecommendNovel() (model.DriftingNovel, error) {
 	}
 	return ret, nil
 }
+
+// DeleteNovel 删除指定漂流小说
+func DeleteNovel(novel model.DriftingNovel) error {
+	err := mysql.DB.Where(&novel).Delete(&novel).Error
+	return err
+}

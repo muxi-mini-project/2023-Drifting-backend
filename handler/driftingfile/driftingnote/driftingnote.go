@@ -137,6 +137,7 @@ func GetJoinedDriftingNotes(c *gin.Context) {
 // @Router /api/v1/drifting_note/detail [get]
 func GetDriftingNoteDetail(c *gin.Context) {
 	var FDriftingNote model.DriftingNote
+	c.BindJSON(&FDriftingNote)
 	info, err := driftingfile.GetNoteInfo(FDriftingNote)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
@@ -182,7 +183,7 @@ func InviteFriend(c *gin.Context) {
 // @Router /api/v1/drifting_note/invite [get]
 func GetInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	invites, err := driftingfile.GetInvites(StudentID)
+	invites, err := driftingfile.GetInvites(StudentID, 3)
 	if err != nil {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
@@ -260,4 +261,31 @@ func AcceptInvite(c *gin.Context) {
 		return
 	}
 	handler.SendGoodResponse(c, "通过成功", nil)
+}
+
+// @Summary 删除漂流本
+// @Description 删除指定漂流本
+// @Tags driftingnote
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param TheNote body model.DriftingNote true "要删除的漂流本"
+// @Success 200 {object} handler.Response "{"message":"删除成功"}"
+// @Failure 400 {object} handler.Response "{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}"
+// @Router /api/v1/drifting_note/delete [delete]
+func DeleteNote(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var DLNote model.DriftingNote
+	err := c.BindJSON(&DLNote)
+	DLNote.OwnerID = StudentID
+	if err != nil {
+		handler.SendBadResponse(c, "获取id出错", err)
+		return
+	}
+	err = driftingfile.DeleteNote(DLNote)
+	if err != nil {
+		handler.SendBadResponse(c, "删除失败，您有可能不是该文件的主人，或者该文件不存在", err)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", err)
 }

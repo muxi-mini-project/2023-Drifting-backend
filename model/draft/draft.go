@@ -25,3 +25,9 @@ func GetDrafts(StudentID int64) ([]model.Draft, error) {
 	err := mysql.DB.Where("owner_id=?", StudentID).Find(&drafts).Error
 	return drafts, err
 }
+
+// DeleteDraft 删除草稿箱
+func DeleteDraft(TheDraft model.Draft) error {
+	err := mysql.DB.Where(&TheDraft).Delete(&TheDraft).Error
+	return err
+}

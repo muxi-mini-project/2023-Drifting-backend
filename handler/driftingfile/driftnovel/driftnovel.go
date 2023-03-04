@@ -4,6 +4,7 @@ import (
 	"Drifting/handler"
 	"Drifting/model"
 	"Drifting/model/driftingfile"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -138,6 +139,7 @@ func GetJoinedDriftingNovels(c *gin.Context) {
 // @Router /api/v1/drifting_novel/detail [get]
 func GetDriftingNovelDetail(c *gin.Context) {
 	var FDriftingNovel model.DriftingNovel
+	c.BindJSON(&FDriftingNovel)
 	info, err := driftingfile.GetNovelInfo(FDriftingNovel)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
@@ -183,7 +185,7 @@ func InviteFriend(c *gin.Context) {
 // @Router /api/v1/drifting_novel/invite [get]
 func GetInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	invites, err := driftingfile.GetInvites(StudentID)
+	invites, err := driftingfile.GetInvites(StudentID, 2)
 	if err != nil {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
@@ -261,4 +263,32 @@ func AcceptInvite(c *gin.Context) {
 		return
 	}
 	handler.SendGoodResponse(c, "通过成功", nil)
+}
+
+// @Summary 删除漂流小说
+// @Description 删除指定漂流小说
+// @Tags driftingnovel
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param ThePicture body model.DriftingNovel true "要删除的漂流小说"
+// @Success 200 {object} handler.Response "{"message":"删除成功"}"
+// @Failure 400 {object} handler.Response "{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}"
+// @Router /api/v1/drifting_novel/delete [delete]
+func DeletePicture(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var DLNovel model.DriftingNovel
+	err := c.BindJSON(&DLNovel)
+	fmt.Println(err)
+	DLNovel.OwnerID = StudentID
+	if err != nil {
+		handler.SendBadResponse(c, "获取id出错", err)
+		return
+	}
+	err = driftingfile.DeleteNovel(DLNovel)
+	if err != nil {
+		handler.SendBadResponse(c, "删除失败，您有可能不是该文件的主人，或者该文件不存在", err)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", err)
 }

@@ -77,3 +77,30 @@ func GetCreatedDrafts(c *gin.Context) {
 	}
 	handler.SendGoodResponse(c, "获取成功", notes)
 }
+
+// @Summary 删除草稿箱
+// @Description 删除指定草稿箱
+// @Tags draft
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param TheDraft body model.Draft true "要删除的草稿箱"
+// @Success 200 {object} handler.Response "{"message":"删除成功"}"
+// @Failure 400 {object} handler.Response "{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}"
+// @Router /api/v1/draft/delete [delete]
+func DeleteDraft(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var DLDraft model.Draft
+	DLDraft.OwnerID = StudentID
+	err := c.BindJSON(&DLDraft)
+	if err != nil {
+		handler.SendBadResponse(c, "获取id出错", err)
+		return
+	}
+	err = draft.DeleteDraft(DLDraft)
+	if err != nil {
+		handler.SendBadResponse(c, "删除失败，您有可能不是该文件的主人，或者该文件不存在", err)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", err)
+}

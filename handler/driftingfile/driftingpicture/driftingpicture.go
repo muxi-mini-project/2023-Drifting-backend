@@ -47,7 +47,7 @@ func CreateDriftingPicture(c *gin.Context) {
 // @Router /api/v1/drifting_picture/create  [get]
 func GetCreatedDriftingPictures(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	notes, err := driftingfile.GetDriftingNotes(StudentID)
+	notes, err := driftingfile.GetDriftingPicture(StudentID)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
 		return
@@ -115,7 +115,7 @@ func GetJoinedDriftingPictures(c *gin.Context) {
 func DrawDriftingPicture(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var NewContact model.PictureContact
-	a := c.Param("file_id")
+	a := c.PostForm("file_id")
 	b, err := strconv.Atoi(a)
 	if err != nil {
 		handler.SendBadResponse(c, "出错", err)
@@ -147,6 +147,7 @@ func DrawDriftingPicture(c *gin.Context) {
 // @Router /api/v1/drifting_picture/detail [get]
 func GetDriftingPictureDetail(c *gin.Context) {
 	var FDriftingPicture model.DriftingPicture
+	c.BindJSON(&FDriftingPicture)
 	info, err := driftingfile.DriftingPictureDetail(FDriftingPicture)
 	if err != nil {
 		handler.SendBadResponse(c, "获取失败", err)
@@ -192,7 +193,7 @@ func InviteFriend(c *gin.Context) {
 // @Router /api/v1/drifting_picture/invite [get]
 func GetInvite(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
-	invites, err := driftingfile.GetInvites(StudentID)
+	invites, err := driftingfile.GetInvites(StudentID, 4)
 	if err != nil {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
@@ -270,4 +271,31 @@ func AcceptInvite(c *gin.Context) {
 		return
 	}
 	handler.SendGoodResponse(c, "通过成功", nil)
+}
+
+// @Summary 删除漂流相片
+// @Description 删除指定漂流相片
+// @Tags driftingpicture
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param ThePicture body model.DriftingPicture true "要删除的漂流相片"
+// @Success 200 {object} handler.Response "{"message":"删除成功"}"
+// @Failure 400 {object} handler.Response "{"message":"删除失败，您有可能不是该文件的主人，或者该文件不存在"}"
+// @Router /api/v1/drifting_picture/delete [delete]
+func DeletePicture(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var DLPicture model.DriftingPicture
+	err := c.BindJSON(&DLPicture)
+	DLPicture.OwnerID = StudentID
+	if err != nil {
+		handler.SendBadResponse(c, "获取id出错", err)
+		return
+	}
+	err = driftingfile.DeletePicture(DLPicture)
+	if err != nil {
+		handler.SendBadResponse(c, "删除失败，您有可能不是该文件的主人，或者该文件不存在", err)
+		return
+	}
+	handler.SendGoodResponse(c, "删除成功", err)
 }

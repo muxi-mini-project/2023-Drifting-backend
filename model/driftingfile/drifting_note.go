@@ -84,6 +84,7 @@ func GetNoteInfo(FD model.DriftingNote) (model.NoteInfo, error) {
 
 // CreateInvite 创建创作邀请
 func CreateInvite(NewInvite model.Invite) error {
+	NewInvite.FileKind = "漂流画"
 	err := mysql.DB.Where(&NewInvite).First(&NewInvite).Error
 	if err != nil {
 		err = mysql.DB.Create(&NewInvite).Error
@@ -92,11 +93,108 @@ func CreateInvite(NewInvite model.Invite) error {
 	return errno.ErrDatabase
 }
 
+func CreateDrawingInviteInfos(info model.DriftingDrawing) model.InviteInfo {
+	var ThisInfo model.InviteInfo
+	ThisInfo = model.InviteInfo{
+		FileID:   info.ID,
+		CreateAt: info.CreatedAt,
+		FileKind: "漂流画",
+		HonerID:  info.OwnerID,
+		Cover:    info.Cover,
+		Kind:     info.Kind,
+		Theme:    info.Theme,
+		Number:   info.Number,
+	}
+	return ThisInfo
+}
+
+func CreateNoteInviteInfos(info model.DriftingNote) model.InviteInfo {
+	var ThisInfo model.InviteInfo
+	ThisInfo = model.InviteInfo{
+		FileID:   info.ID,
+		CreateAt: info.CreatedAt,
+		FileKind: "漂流本",
+		HonerID:  info.OwnerID,
+		Cover:    info.Cover,
+		Kind:     info.Kind,
+		Theme:    info.Theme,
+		Number:   info.Number,
+	}
+	return ThisInfo
+}
+
+func CreatePictureInviteInfos(info model.DriftingPicture) model.InviteInfo {
+	var ThisInfo model.InviteInfo
+	ThisInfo = model.InviteInfo{
+		FileID:   info.ID,
+		CreateAt: info.CreatedAt,
+		FileKind: "漂流相片",
+		HonerID:  info.OwnerID,
+		Cover:    info.Cover,
+		Kind:     info.Kind,
+		Theme:    info.Theme,
+		Number:   info.Number,
+	}
+	return ThisInfo
+}
+
+func CreateNovelInviteInfos(info model.DriftingNovel) model.InviteInfo {
+	var ThisInfo model.InviteInfo
+	ThisInfo = model.InviteInfo{
+		FileID:   info.ID,
+		CreateAt: info.CreatedAt,
+		FileKind: "漂流小说",
+		HonerID:  info.OwnerID,
+		Cover:    info.Cover,
+		Kind:     info.Kind,
+		Theme:    info.Theme,
+		Number:   info.Number,
+	}
+	return ThisInfo
+}
+
 // GetInvites 获取邀请信息
-func GetInvites(StudentID int64) ([]model.Invite, error) {
+func GetInvites(StudentID int64, num int) ([]model.InviteInfo, error) {
 	var invites []model.Invite
-	err := mysql.DB.Where("friend_id = ?", StudentID).Find(&invites).Error
-	return invites, err
+	var err error
+	switch num {
+	case 1:
+		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流画").Find(&invites).Error
+		break
+	case 2:
+		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流小说").Find(&invites).Error
+		break
+	case 3:
+		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流本").Find(&invites).Error
+		break
+	case 4:
+		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流小说").Find(&invites).Error
+		break
+	}
+	if err != nil {
+		return nil, err
+	}
+	var InviteInfos []model.InviteInfo
+	for _, invite := range invites {
+		if num == 1 {
+			var info model.DriftingDrawing
+			err = mysql.DB.Where("id = ?", invite.FileID).Find(&info).Error
+			InviteInfos = append(InviteInfos, CreateDrawingInviteInfos(info))
+		} else if num == 2 {
+			var info model.DriftingNovel
+			err = mysql.DB.Where("id = ?", invite.FileID).Find(&info).Error
+			InviteInfos = append(InviteInfos, CreateNovelInviteInfos(info))
+		} else if num == 3 {
+			var info model.DriftingNote
+			err = mysql.DB.Where("id = ?", invite.FileID).Find(&info).Error
+			InviteInfos = append(InviteInfos, CreateNoteInviteInfos(info))
+		} else if num == 4 {
+			var info model.DriftingPicture
+			err = mysql.DB.Where("id = ?", invite.FileID).Find(&info).Error
+			InviteInfos = append(InviteInfos, CreatePictureInviteInfos(info))
+		}
+	}
+	return InviteInfos, err
 }
 
 // RefuseNoteInvite 拒绝漂流本邀请
@@ -140,5 +238,11 @@ func RandomRecommendNote() (model.DriftingNote, error) {
 // AcceptTheInvite 接受邀请
 func AcceptTheInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
+	return err
+}
+
+// DeleteNote 删除指定漂流本
+func DeleteNote(TheNote model.DriftingNote) error {
+	err := mysql.DB.Where(&TheNote).Delete(&TheNote).Error
 	return err
 }
