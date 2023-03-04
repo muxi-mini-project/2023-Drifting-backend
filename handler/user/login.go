@@ -39,12 +39,17 @@ func Login(c *gin.Context) {
 	result := mysql.DB.Where("student_id = ?", u.StudentID).First(&u)
 	if result.Error != nil {
 		id := strconv.Itoa(int(u.StudentID))
-		_, err := model.GetUserInfoFormOne(id, pwd)
+		Info01, err := model.GetUserInfoFormOne(id, pwd)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, "Password or account is wrong.")
 			return
 		}
 		//对用户信息初始化
+		if Info01.User.Xb == "1" {
+			u.Sex = "男"
+		} else if Info01.User.Xb == "0" {
+			u.Sex = "女"
+		}
 		u.Name = " "
 		//对密码进行base64加密
 		u.PassWord = base64.StdEncoding.EncodeToString([]byte(u.PassWord))

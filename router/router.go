@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Drifting/handler/draft"
 	"Drifting/handler/driftingfile/driftingdrawing"
 	"Drifting/handler/driftingfile/driftingnote"
 	"Drifting/handler/driftingfile/driftingpicture"
@@ -98,7 +99,24 @@ func RouterInit() *gin.Engine {
 		DriftingNovelGroup.POST("/refuse", driftingnovel.RefuseInvite)
 		DriftingNovelGroup.GET("/recommendation", driftingnovel.RandomRecommendation)
 		DriftingNovelGroup.POST("/accept", driftingnovel.AcceptInvite)
-
 	}
+
+	// 草稿箱路由
+	DraftGroup := e.Group("/api/v1/draft").Use(middleware.Auth())
+	{
+		DraftGroup.POST("/create", draft.CreateDraft)
+		DraftGroup.POST("/write", draft.WriteDraft)
+		DraftGroup.GET("/create", draft.GetCreatedDrafts)
+	}
+
+	//e.POST("api/v1/test", func(c *gin.Context) {
+	//	f, err := c.FormFile("picture")
+	//	if err != nil {
+	//		handler.SendBadResponse(c, "出错", err)
+	//		return
+	//	}
+	//	_, str := qiniu.UploadToQiNiu(f, "covers/")
+	//	handler.SendGoodResponse(c, "获取成功", str)
+	//})
 	return e
 }

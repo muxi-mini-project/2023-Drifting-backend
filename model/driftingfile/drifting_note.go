@@ -7,10 +7,18 @@ import (
 )
 
 // CreateDriftingNote 创建漂流本
-func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) error {
+func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) (error, uint) {
 	NewDriftingNote.OwnerID = StudentID
 	err := mysql.DB.Create(&NewDriftingNote).Error
-	return err
+	if err != nil {
+		return err, 0
+	}
+	var FindNote model.DriftingNote
+	err = mysql.DB.Where(&NewDriftingNote).Find(&FindNote).Error
+	if err != nil {
+		return err, 0
+	}
+	return err, FindNote.ID
 }
 
 // WriteDriftingNote 参与创作

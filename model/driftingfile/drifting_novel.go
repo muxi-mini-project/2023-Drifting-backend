@@ -7,10 +7,18 @@ import (
 )
 
 // CreateDriftingNovel 创建漂流小说
-func CreateDriftingNovel(StudentID int64, NewDriftingNovel model.DriftingNovel) error {
+func CreateDriftingNovel(StudentID int64, NewDriftingNovel model.DriftingNovel) (error, uint) {
 	NewDriftingNovel.OwnerID = StudentID
 	err := mysql.DB.Create(&NewDriftingNovel).Error
-	return err
+	if err != nil {
+		return err, 0
+	}
+	var FindNovel model.DriftingNovel
+	err = mysql.DB.Where(&NewDriftingNovel).Find(&FindNovel).Error
+	if err != nil {
+		return err, 0
+	}
+	return err, FindNovel.ID
 }
 
 // WriteDriftingNovel 参与创作

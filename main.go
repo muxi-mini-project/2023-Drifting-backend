@@ -11,12 +11,12 @@ import (
 // @termsOfService http://swagger.io/terms/
 // @contact.name KitZhangYs
 // @contact.email SJMbaiyang@163.com
-// @host 116.204.121.9:8088
+// @host 116.204.121.9:61583
 // @BasePath /api/v1
 func main() {
 	mysql.InitMysql()
 	e := router.RouterInit()
-	err := e.Run(":8088")
+	err := e.Run(":61583")
 	if err != nil {
 		panic(err)
 		return

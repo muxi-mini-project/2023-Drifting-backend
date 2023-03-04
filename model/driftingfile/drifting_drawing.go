@@ -9,9 +9,17 @@ import (
 )
 
 // CreateNewDriftingDrawing 创建漂流画
-func CreateNewDriftingDrawing(NewDrawing model.DriftingDrawing) error {
+func CreateNewDriftingDrawing(NewDrawing model.DriftingDrawing) (error, uint) {
 	err := mysql.DB.Create(&NewDrawing).Error
-	return err
+	if err != nil {
+		return err, 0
+	}
+	var FindDrawing model.DriftingDrawing
+	err = mysql.DB.Where(&NewDrawing).Find(&FindDrawing).Error
+	if err != nil {
+		return err, 0
+	}
+	return err, FindDrawing.ID
 }
 
 // JoinNewDriftingDrawing 参加漂流画

@@ -9,9 +9,17 @@ import (
 )
 
 // CreateNewDriftingPicture 创建漂流照片
-func CreateNewDriftingPicture(NewPicture model.DriftingPicture) error {
+func CreateNewDriftingPicture(NewPicture model.DriftingPicture) (error, uint) {
 	err := mysql.DB.Create(&NewPicture).Error
-	return err
+	if err != nil {
+		return err, 0
+	}
+	var FindPicture model.DriftingPicture
+	err = mysql.DB.Where(&NewPicture).Find(&FindPicture).Error
+	if err != nil {
+		return err, 0
+	}
+	return err, FindPicture.ID
 }
 
 // JoinNewDriftingPicture 参与漂流照片

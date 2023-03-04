@@ -26,12 +26,13 @@ func CreateDriftingNovel(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息出错", err)
 		return
 	}
-	err = driftingfile.CreateDriftingNovel(StudentID, NewDriftingNovel)
+	var id uint
+	err, id = driftingfile.CreateDriftingNovel(StudentID, NewDriftingNovel)
 	if err != nil {
 		handler.SendBadResponse(c, "创建出错", err)
 		return
 	}
-	handler.SendGoodResponse(c, "创建成功", nil)
+	handler.SendGoodResponse(c, "创建成功，获得漂流小说id", id)
 }
 
 // @Summary 参与漂流小说创作(写内容)

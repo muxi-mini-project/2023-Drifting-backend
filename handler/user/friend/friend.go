@@ -85,7 +85,7 @@ func GetAddRequest(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Param UserAndFriends body model.UserAndFriends true "通过的好友学号"
+// @Param UserAndFriends body model.AddingFriend true "通过的好友学号"
 // @Success 200 {object} handler.Response "{"message":"Success"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/friend/pass [post]

@@ -13,7 +13,7 @@ func CreateDraft(StudentID int64, NewDraft model.Draft) error {
 }
 
 // WriteDraft 写草稿
-func WriteDraft(StudentID int64, TheContact model.draftContact) error {
+func WriteDraft(StudentID int64, TheContact model.DraftContact) error {
 	TheContact.WriterID = StudentID
 	err := mysql.DB.Create(&TheContact).Error
 	return err
