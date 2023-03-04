@@ -27,12 +27,13 @@ func CreateDriftingPicture(c *gin.Context) {
 		return
 	}
 	NewPicture.OwnerID = StudentID
-	err = driftingfile.CreateNewDriftingPicture(NewPicture)
+	var id uint
+	err, id = driftingfile.CreateNewDriftingPicture(NewPicture)
 	if err != nil {
 		handler.SendBadResponse(c, "创建失败", err)
 		return
 	}
-	handler.SendGoodResponse(c, "创建成功", nil)
+	handler.SendGoodResponse(c, "创建成功，获得漂流相片id", id)
 }
 
 // @Summary 获取用户漂流照片

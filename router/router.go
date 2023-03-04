@@ -108,5 +108,15 @@ func RouterInit() *gin.Engine {
 		DraftGroup.POST("/write", draft.WriteDraft)
 		DraftGroup.GET("/create", draft.GetCreatedDrafts)
 	}
+
+	//e.POST("api/v1/test", func(c *gin.Context) {
+	//	f, err := c.FormFile("picture")
+	//	if err != nil {
+	//		handler.SendBadResponse(c, "出错", err)
+	//		return
+	//	}
+	//	_, str := qiniu.UploadToQiNiu(f, "covers/")
+	//	handler.SendGoodResponse(c, "获取成功", str)
+	//})
 	return e
 }

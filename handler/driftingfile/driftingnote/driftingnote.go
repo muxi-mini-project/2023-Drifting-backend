@@ -25,12 +25,13 @@ func CreateDriftingNote(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息出错", err)
 		return
 	}
-	err = driftingfile.CreateDriftingNote(StudentID, NewDriftingNote)
+	var id uint
+	err, id = driftingfile.CreateDriftingNote(StudentID, NewDriftingNote)
 	if err != nil {
 		handler.SendBadResponse(c, "创建出错", err)
 		return
 	}
-	handler.SendGoodResponse(c, "创建成功", nil)
+	handler.SendGoodResponse(c, "创建成功，获得漂流本id", id)
 }
 
 // @Summary 参与漂流本创作(写内容)
