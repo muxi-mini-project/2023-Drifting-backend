@@ -64,33 +64,9 @@ definitions:
         type: string
       updatedAt:
         type: string
-    required:
-    - file_kind
-    type: object
-  model.DrawingContact:
-    properties:
-      file_id:
-        type: integer
-      picture:
-        type: string
-      writer_id:
-        type: integer
-    type: object
-  model.DrawingInfo:
-    properties:
-      contacts:
-        items:
-          $ref: '#/definitions/model.DrawingContact'
-        type: array
-      name:
-        type: string
-      ownerID:
-        type: integer
     type: object
   model.DriftingDrawing:
     properties:
-      contact:
-        type: string
       cover:
         type: string
       createdAt:
@@ -111,6 +87,8 @@ definitions:
         type: string
       updatedAt:
         type: string
+      writer_number:
+        type: integer
     type: object
   model.DriftingNote:
     properties:
@@ -134,11 +112,11 @@ definitions:
         type: string
       updatedAt:
         type: string
+      writer_number:
+        type: integer
     type: object
   model.DriftingNovel:
     properties:
-      contact:
-        type: string
       cover:
         type: string
       createdAt:
@@ -159,13 +137,11 @@ definitions:
         type: string
       updatedAt:
         type: string
-    required:
-    - kind
+      writer_number:
+        type: integer
     type: object
   model.DriftingPicture:
     properties:
-      contact:
-        type: string
       cover:
         type: string
       createdAt:
@@ -186,10 +162,17 @@ definitions:
         type: string
       updatedAt:
         type: string
+      writer_number:
+        type: integer
     type: object
   model.GetFileId:
     properties:
       id:
+        type: integer
+    type: object
+  model.GetId:
+    properties:
+      studentID:
         type: integer
     type: object
   model.Invite:
@@ -230,51 +213,27 @@ definitions:
     properties:
       file_id:
         type: integer
-      text:
+      the_words:
         type: string
       writer_id:
-        type: integer
-    type: object
-  model.NoteInfo:
-    properties:
-      contacts:
-        items:
-          $ref: '#/definitions/model.NoteContact'
-        type: array
-      name:
-        type: string
-      ownerID:
         type: integer
     type: object
   model.NovelContact:
     properties:
       file_id:
         type: integer
-      text:
+      the_words:
         type: string
       writer_id:
         type: integer
     type: object
-  model.NovelInfo:
+  model.State:
     properties:
-      contacts:
-        items:
-          $ref: '#/definitions/model.NoteContact'
-        type: array
-      name:
-        type: string
-      ownerID:
+      file_id:
         type: integer
-    type: object
-  model.PictureInfo:
-    properties:
-      contacts:
-        items:
-          $ref: '#/definitions/model.DrawingContact'
-        type: array
-      name:
+      file_kind:
         type: string
-      ownerID:
+      writer_id:
         type: integer
     type: object
   model.UserAndFriends:
@@ -294,6 +253,8 @@ definitions:
         type: string
       sex:
         type: string
+      studentID:
+        type: integer
     type: object
 host: 116.204.121.9:61583
 info:
@@ -305,6 +266,66 @@ info:
   title: Drifting API
   version: "1.0"
 paths:
+  /api/v1/apk/get_version:
+    get:
+      consumes:
+      - application/json
+      description: 获取最新版本号
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获得版本号"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"获取版本号失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取最新版本号
+      tags:
+      - apk
+  /api/v1/apk/update:
+    post:
+      consumes:
+      - application/json
+      description: 用文件上传apk，不需要写对应功能，建议在apifox上进行更新
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: apk
+        in: formData
+        name: apk
+        required: true
+        type: file
+      - description: version
+        in: formData
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"上传成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"上传失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 上传apk
+      tags:
+      - apk
   /api/v1/draft/create:
     get:
       consumes:
@@ -472,9 +493,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingDrawing'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -544,7 +563,7 @@ paths:
       tags:
       - driftingdrawing
   /api/v1/drifting_drawing/detail:
-    get:
+    post:
       consumes:
       - application/json
       description: 获取漂流本内容，需在json中提供漂流画的ID
@@ -566,7 +585,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.DrawingInfo'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -626,9 +645,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.Invite'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取信息失败"}'
           schema:
@@ -683,9 +700,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNote'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -740,7 +755,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.DriftingDrawing'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -827,9 +842,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNote'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -899,7 +912,7 @@ paths:
       tags:
       - driftingnote
   /api/v1/drifting_note/detail:
-    get:
+    post:
       consumes:
       - application/json
       description: 获取漂流本内容，需在json中提供漂流本的ID
@@ -921,7 +934,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.NoteInfo'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -946,9 +959,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.Invite'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取信息失败"}'
           schema:
@@ -1003,9 +1014,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNote'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -1060,7 +1069,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.DriftingNote'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1178,9 +1187,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNovel'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -1234,7 +1241,7 @@ paths:
         name: ThePicture
         required: true
         schema:
-          $ref: '#/definitions/model.DriftingPicture'
+          $ref: '#/definitions/model.DriftingNovel'
       produces:
       - application/json
       responses:
@@ -1250,7 +1257,7 @@ paths:
       tags:
       - driftingnovel
   /api/v1/drifting_novel/detail:
-    get:
+    post:
       consumes:
       - application/json
       description: 获取漂流小说内容，需在json中提供漂流小说的ID
@@ -1272,7 +1279,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.NovelInfo'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1297,9 +1304,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.Invite'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取信息失败"}'
           schema:
@@ -1354,9 +1359,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNovel'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -1411,7 +1414,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.DriftingNovel'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1529,9 +1532,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingPicture'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -1601,7 +1602,7 @@ paths:
       tags:
       - driftingpicture
   /api/v1/drifting_picture/detail:
-    get:
+    post:
       consumes:
       - application/json
       description: 获取漂流本内容，需在json中提供漂流照片的ID
@@ -1623,7 +1624,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.PictureInfo'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1644,12 +1645,12 @@ paths:
         type: string
       - description: 内容
         in: formData
-        name: file
+        name: picture
         required: true
         type: file
       - description: id
         in: formData
-        name: id
+        name: file_id
         required: true
         type: string
       produces:
@@ -1683,9 +1684,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.Invite'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取信息失败"}'
           schema:
@@ -1740,9 +1739,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.DriftingNote'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"Failure"}'
           schema:
@@ -1797,7 +1794,7 @@ paths:
         "200":
           description: '{"message":"获取成功"}'
           schema:
-            $ref: '#/definitions/model.DriftingPicture'
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1915,9 +1912,7 @@ paths:
         "200":
           description: '{"msg":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.UserInfo'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取好友信息出错"}'
           schema:
@@ -1956,6 +1951,37 @@ paths:
       summary: 通过好友申请
       tags:
       - friend
+  /api/v1/friend/refuse:
+    delete:
+      consumes:
+      - application/json
+      description: 拒绝用户的好友申请，提供对方id
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 将拒绝的好友申请
+        in: body
+        name: UserAndFriends
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddingFriend'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"拒绝成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":" 出错"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 拒绝好友申请
+      tags:
+      - friend
   /api/v1/friend/request:
     get:
       consumes:
@@ -1973,9 +1999,7 @@ paths:
         "200":
           description: '{"msg":"获取成功"}'
           schema:
-            items:
-              $ref: '#/definitions/model.UserInfo'
-            type: array
+            $ref: '#/definitions/Response'
         "400":
           description: '{"message":"获取失败"}'
           schema:
@@ -1983,6 +2007,99 @@ paths:
       summary: 获取好友申请
       tags:
       - friend
+  /api/v1/lock/get_lock:
+    post:
+      consumes:
+      - application/json
+      description: 获取当前上锁人信息，需提供文件ID及文件类型(漂流本/漂流照片/漂流小说/漂流画)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 获取信息请求
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/model.State'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"获取失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 或取当前上锁人
+      tags:
+      - Lock
+  /api/v1/lock/lock_off:
+    delete:
+      consumes:
+      - application/json
+      description: 解锁漂流文件，需提供文件ID及文件类型(漂流本/漂流照片/漂流小说/漂流画)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 解锁请求体
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/model.State'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"解锁成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"解锁失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 解锁漂流文件
+      tags:
+      - Lock
+  /api/v1/lock/lock_on:
+    post:
+      consumes:
+      - application/json
+      description: 需提供文件ID，及文件类型(漂流本/漂流照片/漂流小说/漂流画)，需携带token
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 上锁请求
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/model.State'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"上锁成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"上锁失败"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 对漂流文件上锁
+      tags:
+      - Lock
   /api/v1/login:
     post:
       consumes:
@@ -2072,6 +2189,37 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: 获取用户信息
+      tags:
+      - user
+  /api/v1/user/id_detail:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user_id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          $ref: '#/definitions/model.GetId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"获取成功"}'
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: '{"message":"Failure"}'
+          schema:
+            $ref: '#/definitions/Response'
+      summary: 获取用户信息(用id)
       tags:
       - user
   /api/v1/user/update:

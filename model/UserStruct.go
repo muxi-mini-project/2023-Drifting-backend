@@ -47,13 +47,18 @@ type JoinedDrifting struct {
 }
 
 type UserInfo struct {
-	Name     string `json:"name"`
-	Sex      string `json:"sex"`
-	Avatar   string `json:"avatar"`
-	SelfWord string `json:"selfWord"`
+	StudentID int64  `json:"studentID"`
+	Name      string `json:"name"`
+	Sex       string `json:"sex"`
+	Avatar    string `json:"avatar"`
+	SelfWord  string `json:"selfWord"`
 }
 
 type LoginRequest struct {
 	StudentID int64  `json:"studentID"`
 	PassWord  string `json:"passWord" gorm:"size:255"`
+}
+
+type GetId struct {
+	StudentID int64 `json:"studentID"`
 }

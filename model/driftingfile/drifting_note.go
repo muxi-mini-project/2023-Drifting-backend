@@ -9,6 +9,7 @@ import (
 // CreateDriftingNote 创建漂流本
 func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) (error, uint) {
 	NewDriftingNote.OwnerID = StudentID
+	//NewDriftingNote.WriterNumber = 1
 	err := mysql.DB.Create(&NewDriftingNote).Error
 	if err != nil {
 		return err, 0
@@ -18,6 +19,13 @@ func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) (er
 	if err != nil {
 		return err, 0
 	}
+	//var NewJoined model.JoinedDrifting
+	//NewJoined.StudentID = StudentID
+	//NewJoined.DriftingNoteID = int64(NewDriftingNote.ID)
+	//err = JoinDriftingNote(NewJoined)
+	//if err != nil {
+	//	return err, 0
+	//}
 	return err, FindNote.ID
 }
 
@@ -25,6 +33,13 @@ func CreateDriftingNote(StudentID int64, NewDriftingNote model.DriftingNote) (er
 func WriteDriftingNote(StudentID int64, TheContact model.NoteContact) error {
 	TheContact.WriterID = StudentID
 	err := mysql.DB.Create(&TheContact).Error
+	var NewInfo model.DriftingNote
+	err = mysql.DB.Where("id = ?", TheContact.FileID).Find(&NewInfo).Error
+	if err != nil {
+		return err
+	}
+	NewInfo.WriterNumber = NewInfo.WriterNumber + 1
+	err = mysql.DB.Where("id = ?", TheContact.FileID).Updates(&NewInfo).Error
 	return err
 }
 
@@ -36,10 +51,10 @@ func GetDriftingNotes(StudentID int64) ([]model.DriftingNote, error) {
 }
 
 // JoinDriftingNote 参加漂流本创作
-func JoinDriftingNote(NewJoin model.JoinedDrifting) error {
-	err := mysql.DB.Where(&NewJoin).First(&NewJoin).Error
+func JoinDriftingNote(Joining model.JoinedDrifting) error {
+	err := mysql.DB.Where(&Joining).First(&Joining).Error
 	if err != nil {
-		err1 := mysql.DB.Create(&NewJoin).Error
+		err1 := mysql.DB.Create(&Joining).Error
 		return err1
 	}
 	return errno.ErrDatabase
@@ -56,7 +71,7 @@ func GetJoinedDriftingNotes(StudentID int64) ([]model.DriftingNote, error) {
 	for _, v := range Joined {
 		if v.DriftingNoteID != 0 {
 			var a model.DriftingNote
-			err = mysql.DB.Where("id = ?", v.DriftingNoteID).First(&a).Error
+			err = mysql.DB.Where("id = ?", v.DriftingNoteID).Find(&a).Error
 			if err != nil {
 				return nil, err
 			}
@@ -82,12 +97,62 @@ func GetNoteInfo(FD model.DriftingNote) (model.NoteInfo, error) {
 	return info, nil
 }
 
+// SelectID 检验邀请ID是否匹配
+func SelectID(NewInvite model.Invite, a string) error {
+	switch a {
+	case "漂流本":
+		var NewNote model.DriftingNote
+		NewNote.ID = uint(NewInvite.FileID)
+		NewNote.OwnerID = NewInvite.HostID
+		err := mysql.DB.Where(&NewNote).First(&NewNote).Error
+		if err == nil {
+			break
+		} else {
+			return errno.ErrMatch
+		}
+	case "漂流画":
+		var NewDrawing model.DriftingDrawing
+		NewDrawing.ID = uint(NewInvite.FileID)
+		NewDrawing.OwnerID = NewInvite.HostID
+		err := mysql.DB.Where(&NewDrawing).First(&NewDrawing).Error
+		if err == nil {
+			break
+		} else {
+			return errno.ErrMatch
+		}
+	case "漂流小说":
+		var NewNovel model.DriftingNovel
+		NewNovel.ID = uint(NewInvite.FileID)
+		NewNovel.OwnerID = NewInvite.HostID
+		err := mysql.DB.Where(&NewNovel).First(&NewNovel).Error
+		if err == nil {
+			break
+		} else {
+			return errno.ErrMatch
+		}
+	case "漂流相机":
+		var NewPicture model.DriftingPicture
+		NewPicture.ID = uint(NewInvite.FileID)
+		NewPicture.OwnerID = NewInvite.HostID
+		err := mysql.DB.Where(&NewPicture).First(&NewPicture).Error
+		if err == nil {
+			break
+		} else {
+			return errno.ErrMatch
+		}
+	}
+	return nil
+}
+
 // CreateInvite 创建创作邀请
-func CreateInvite(NewInvite model.Invite) error {
-	NewInvite.FileKind = "漂流画"
+func CreateInvite(NewInvite model.Invite, a string) error {
+	NewInvite.FileKind = a
 	err := mysql.DB.Where(&NewInvite).First(&NewInvite).Error
 	if err != nil {
-		err = mysql.DB.Create(&NewInvite).Error
+		err = SelectID(NewInvite, a)
+		if err == nil {
+			err = mysql.DB.Create(&NewInvite).Error
+		}
 		return err
 	}
 	return errno.ErrDatabase
@@ -96,14 +161,15 @@ func CreateInvite(NewInvite model.Invite) error {
 func CreateDrawingInviteInfos(info model.DriftingDrawing) model.InviteInfo {
 	var ThisInfo model.InviteInfo
 	ThisInfo = model.InviteInfo{
+		Name:     info.Name,
 		FileID:   info.ID,
 		CreateAt: info.CreatedAt,
 		FileKind: "漂流画",
-		HonerID:  info.OwnerID,
+		OwnerID:  info.OwnerID,
 		Cover:    info.Cover,
 		Kind:     info.Kind,
 		Theme:    info.Theme,
-		Number:   info.Number,
+		Number:   info.SetNumber,
 	}
 	return ThisInfo
 }
@@ -111,14 +177,15 @@ func CreateDrawingInviteInfos(info model.DriftingDrawing) model.InviteInfo {
 func CreateNoteInviteInfos(info model.DriftingNote) model.InviteInfo {
 	var ThisInfo model.InviteInfo
 	ThisInfo = model.InviteInfo{
+		Name:     info.Name,
 		FileID:   info.ID,
 		CreateAt: info.CreatedAt,
 		FileKind: "漂流本",
-		HonerID:  info.OwnerID,
+		OwnerID:  info.OwnerID,
 		Cover:    info.Cover,
 		Kind:     info.Kind,
 		Theme:    info.Theme,
-		Number:   info.Number,
+		Number:   info.SetNumber,
 	}
 	return ThisInfo
 }
@@ -126,14 +193,15 @@ func CreateNoteInviteInfos(info model.DriftingNote) model.InviteInfo {
 func CreatePictureInviteInfos(info model.DriftingPicture) model.InviteInfo {
 	var ThisInfo model.InviteInfo
 	ThisInfo = model.InviteInfo{
+		Name:     info.Name,
 		FileID:   info.ID,
 		CreateAt: info.CreatedAt,
-		FileKind: "漂流相片",
-		HonerID:  info.OwnerID,
+		FileKind: "漂流相机",
+		OwnerID:  info.OwnerID,
 		Cover:    info.Cover,
 		Kind:     info.Kind,
 		Theme:    info.Theme,
-		Number:   info.Number,
+		Number:   info.SetNumber,
 	}
 	return ThisInfo
 }
@@ -141,14 +209,15 @@ func CreatePictureInviteInfos(info model.DriftingPicture) model.InviteInfo {
 func CreateNovelInviteInfos(info model.DriftingNovel) model.InviteInfo {
 	var ThisInfo model.InviteInfo
 	ThisInfo = model.InviteInfo{
+		Name:     info.Name,
 		FileID:   info.ID,
 		CreateAt: info.CreatedAt,
 		FileKind: "漂流小说",
-		HonerID:  info.OwnerID,
+		OwnerID:  info.OwnerID,
 		Cover:    info.Cover,
 		Kind:     info.Kind,
 		Theme:    info.Theme,
-		Number:   info.Number,
+		Number:   info.SetNumber,
 	}
 	return ThisInfo
 }
@@ -168,7 +237,7 @@ func GetInvites(StudentID int64, num int) ([]model.InviteInfo, error) {
 		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流本").Find(&invites).Error
 		break
 	case 4:
-		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流小说").Find(&invites).Error
+		err = mysql.DB.Where("friend_id = ? AND file_kind = ?", StudentID, "漂流相机").Find(&invites).Error
 		break
 	}
 	if err != nil {
@@ -208,15 +277,15 @@ func RefuseNoteInvite(TheInvite model.Invite) error {
 	if err != nil {
 		return err
 	}
-	Note.Number = Note.Number - 1
+	Note.SetNumber = Note.SetNumber - 1
 	err = mysql.DB.Where("id = ?", Note.ID).Updates(&Note).Error
 	return err
 }
 
 // RandomRecommendNote 随机推荐漂流本
-func RandomRecommendNote() (model.DriftingNote, error) {
+func RandomRecommendNote(StudentID int64) (model.DriftingNote, error) {
 	var notes []model.DriftingNote
-	err := mysql.DB.Not("kind", "熟人模式").Find(&notes).Error
+	err := mysql.DB.Not("kind", 1).Not("number", 1, 0).Not("owner_id", StudentID).Find(&notes).Error
 	if err != nil {
 		return model.DriftingNote{}, err
 	}
@@ -238,11 +307,38 @@ func RandomRecommendNote() (model.DriftingNote, error) {
 // AcceptTheInvite 接受邀请
 func AcceptTheInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
+	//if err != nil {
+	//	return err
+	//}
+	//var NewJoined model.JoinedDrifting
+	//NewJoined.StudentID = TheInvite.FriendID
+	//switch TheInvite.FileKind {
+	//case "漂流本":
+	//	NewJoined.DriftingNoteID = TheInvite.FileID
+	//	err = JoinDriftingNote(NewJoined)
+	//	break
+	//case "漂流画":
+	//	NewJoined.DriftingDrawingID = TheInvite.FileID
+	//	err = JoinNewDriftingDrawing(NewJoined)
+	//	break
+	//case "漂流小说":
+	//	NewJoined.DriftingNovelID = TheInvite.FileID
+	//	err = JoinDriftingNovel(NewJoined)
+	//	break
+	//case "漂流相机":
+	//	NewJoined.DriftingPictureID = TheInvite.FileID
+	//	err = JoinNewDriftingPicture(NewJoined)
+	//	break
+	//}
 	return err
 }
 
 // DeleteNote 删除指定漂流本
 func DeleteNote(TheNote model.DriftingNote) error {
 	err := mysql.DB.Where(&TheNote).Delete(&TheNote).Error
+	if err != nil {
+		return err
+	}
+	err = mysql.DB.Where("drifting_note_id = ?", TheNote.ID).Delete(&model.JoinedDrifting{}).Error
 	return err
 }

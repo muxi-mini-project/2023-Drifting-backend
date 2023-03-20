@@ -28,8 +28,12 @@ var (
 	ErrHaveLike = &Errno{Code: 40003, Message: "已点赞"}
 	ErrNotLike  = &Errno{Code: 40003, Message: "未点赞"}
 
-	ErrMatch = &Errno{Code: 40004, Message: "与该user不匹配"}
+	ErrMatch = &Errno{Code: 40004, Message: "文件主人不匹配"}
 
 	// idea errors
 	ErrSpace = &Errno{Code: 40005, Message: "idea 必须发布到一个对应空间站，privacy 和 space 不能同时为 0。"}
+
+	// State errors
+	ErrState  = &Errno{Code: 40006, Message: "该文件正在进行创作！"}
+	ErrUnLock = &Errno{Code: 40007, Message: "上锁人错误！"}
 )

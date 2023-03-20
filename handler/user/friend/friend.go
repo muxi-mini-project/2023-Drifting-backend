@@ -47,7 +47,7 @@ func AddFriend(c *gin.Context) {
 // @Accept application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.UserInfo "{"msg":"获取成功"}"
+// @Success 200 {object} handler.Response "{"msg":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取好友信息出错"}"
 // @Router /api/v1/friend/get [get]
 func GetFriend(c *gin.Context) {
@@ -66,7 +66,7 @@ func GetFriend(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.UserInfo "{"msg":"获取成功"}"
+// @Success 200 {object} handler.Response "{"msg":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
 // @Router /api/v1/friend/request [get]
 func GetAddRequest(c *gin.Context) {
@@ -105,6 +105,33 @@ func PassAddRequest(c *gin.Context) {
 	handler.SendGoodResponse(c, "您已通过了好友申请", nil)
 }
 
+// @Summary 拒绝好友申请
+// @Description 拒绝用户的好友申请，提供对方id
+// @Tags friend
+// @Accept  application/json
+// @Produce  application/json
+// @Param Authorization header string true "token"
+// @Param UserAndFriends body model.AddingFriend true "将拒绝的好友申请"
+// @Success 200 {object} handler.Response "{"message":"拒绝成功"}"
+// @Failure 400 {object} handler.Response "{"message":" 出错"}"
+// @Router /api/v1/friend/refuse [delete]
+func RefuseFriend(c *gin.Context) {
+	StudentID := c.MustGet("student_id").(int64)
+	var TheAdding model.AddingFriend
+	err := c.BindJSON(&TheAdding)
+	if err != nil {
+		handler.SendBadResponse(c, "出错！", err)
+		return
+	}
+	TheAdding.TargetID = StudentID
+	err = user.Refuse(TheAdding)
+	if err != nil {
+		handler.SendBadResponse(c, "出错！", err)
+		return
+	}
+	handler.SendGoodResponse(c, "拒绝成功", err)
+}
+
 // @Summary 删除好友
 // @Description 删除对应好友，需在json中提供对应好友学号，对应键名为"friendID"
 // @Tags friend
@@ -119,6 +146,7 @@ func DeleteFriend(c *gin.Context) {
 	StudentID := c.MustGet("student_id").(int64)
 	var UserAndFriend model.UserAndFriends
 	err := c.BindJSON(&UserAndFriend)
+	UserAndFriend.UserId = StudentID
 	if err != nil {
 		handler.SendBadResponse(c, "获取数据失败", err)
 	}

@@ -46,6 +46,7 @@ func GetFriend(StudentID int64) ([]model.UserInfo, error) {
 			return nil, err
 		}
 		var timelyInfo model.UserInfo
+		timelyInfo.StudentID = thefriend.StudentID
 		timelyInfo.Name = thefriend.Name
 		timelyInfo.Sex = thefriend.Sex
 		timelyInfo.SelfWord = thefriend.SelfWord
@@ -70,6 +71,7 @@ func GetRequest(StudentID int64) ([]model.UserInfo, error) {
 			return nil, err
 		}
 		var timelyInfo model.UserInfo
+		timelyInfo.StudentID = thefriend.StudentID
 		timelyInfo.Name = thefriend.Name
 		timelyInfo.Sex = thefriend.Sex
 		timelyInfo.SelfWord = thefriend.SelfWord
@@ -118,4 +120,9 @@ func Delete(StudentID int64, FriendID int64) (error, error) {
 	UaF.FriendId = StudentID
 	err2 := mysql.DB.Where(&UaF).Delete(&UaF).Error
 	return err1, err2
+}
+
+func Refuse(TheAdding model.AddingFriend) error {
+	err := mysql.DB.Where(&TheAdding).Delete(&TheAdding).Error
+	return err
 }

@@ -20,6 +20,96 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/apk/get_version": {
+            "get": {
+                "description": "获取最新版本号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "apk"
+                ],
+                "summary": "获取最新版本号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"获得版本号\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"获取版本号失败\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/apk/update": {
+            "post": {
+                "description": "用文件上传apk，不需要写对应功能，建议在apifox上进行更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "apk"
+                ],
+                "summary": "上传apk",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "apk",
+                        "name": "apk",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "version",
+                        "name": "version",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"上传成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"上传失败\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/draft/create": {
             "get": {
                 "description": "获取对应用户创建的草稿箱",
@@ -273,10 +363,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingDrawing"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -381,7 +468,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/drifting_drawing/detail": {
-            "get": {
+            "post": {
                 "description": "获取漂流本内容，需在json中提供漂流画的ID",
                 "consumes": [
                     "application/json"
@@ -415,7 +502,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.DrawingInfo"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -505,10 +592,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Invite"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -591,10 +675,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNote"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -677,7 +758,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingDrawing"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -809,10 +890,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNote"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -917,7 +995,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/drifting_note/detail": {
-            "get": {
+            "post": {
                 "description": "获取漂流本内容，需在json中提供漂流本的ID",
                 "consumes": [
                     "application/json"
@@ -951,7 +1029,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.NoteInfo"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -989,10 +1067,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Invite"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1075,10 +1150,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNote"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1161,7 +1233,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingNote"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1340,10 +1412,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNovel"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1427,7 +1496,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingPicture"
+                            "$ref": "#/definitions/model.DriftingNovel"
                         }
                     }
                 ],
@@ -1448,7 +1517,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/drifting_novel/detail": {
-            "get": {
+            "post": {
                 "description": "获取漂流小说内容，需在json中提供漂流小说的ID",
                 "consumes": [
                     "application/json"
@@ -1482,7 +1551,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.NovelInfo"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1520,10 +1589,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Invite"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1606,10 +1672,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNovel"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1692,7 +1755,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingNovel"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1871,10 +1934,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingPicture"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -1979,7 +2039,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/drifting_picture/detail": {
-            "get": {
+            "post": {
                 "description": "获取漂流本内容，需在json中提供漂流照片的ID",
                 "consumes": [
                     "application/json"
@@ -2013,7 +2073,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.PictureInfo"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -2049,14 +2109,14 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "内容",
-                        "name": "file",
+                        "name": "picture",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "id",
-                        "name": "id",
+                        "name": "file_id",
                         "in": "formData",
                         "required": true
                     }
@@ -2103,10 +2163,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Invite"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -2189,10 +2246,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.DriftingNote"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -2275,7 +2329,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"message\":\"获取成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/model.DriftingPicture"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -2454,10 +2508,7 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"msg\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.UserInfo"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
@@ -2516,6 +2567,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/friend/refuse": {
+            "delete": {
+                "description": "拒绝用户的好友申请，提供对方id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friend"
+                ],
+                "summary": "拒绝好友申请",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "将拒绝的好友申请",
+                        "name": "UserAndFriends",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AddingFriend"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"拒绝成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\" 出错\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/friend/request": {
             "get": {
                 "description": "获取好友申请",
@@ -2542,14 +2640,152 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"msg\":\"获取成功\"}",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.UserInfo"
-                            }
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "400": {
                         "description": "{\"message\":\"获取失败\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/lock/get_lock": {
+            "post": {
+                "description": "获取当前上锁人信息，需提供文件ID及文件类型(漂流本/漂流照片/漂流小说/漂流画)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lock"
+                ],
+                "summary": "或取当前上锁人",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "获取信息请求",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.State"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"获取成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"获取失败\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/lock/lock_off": {
+            "delete": {
+                "description": "解锁漂流文件，需提供文件ID及文件类型(漂流本/漂流照片/漂流小说/漂流画)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lock"
+                ],
+                "summary": "解锁漂流文件",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "解锁请求体",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.State"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"解锁成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"解锁失败\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/lock/lock_on": {
+            "post": {
+                "description": "需提供文件ID，及文件类型(漂流本/漂流照片/漂流小说/漂流画)，需携带token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lock"
+                ],
+                "summary": "对漂流文件上锁",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "上锁请求",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.State"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"上锁成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"上锁失败\"}",
                         "schema": {
                             "$ref": "#/definitions/Response"
                         }
@@ -2692,6 +2928,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/user/id_detail": {
+            "get": {
+                "description": "获取用户信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取用户信息(用id)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "user_id",
+                        "name": "UserId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.GetId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\":\"获取成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"message\":\"Failure\"}",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/update": {
             "post": {
                 "description": "更新用户信息",
@@ -2804,9 +3087,6 @@ const docTemplate = `{
         },
         "model.Draft": {
             "type": "object",
-            "required": [
-                "file_kind"
-            ],
             "properties": {
                 "contact": {
                     "type": "string"
@@ -2843,43 +3123,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.DrawingContact": {
-            "type": "object",
-            "properties": {
-                "file_id": {
-                    "type": "integer"
-                },
-                "picture": {
-                    "type": "string"
-                },
-                "writer_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.DrawingInfo": {
-            "type": "object",
-            "properties": {
-                "contacts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.DrawingContact"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "ownerID": {
-                    "type": "integer"
-                }
-            }
-        },
         "model.DriftingDrawing": {
             "type": "object",
             "properties": {
-                "contact": {
-                    "type": "string"
-                },
                 "cover": {
                     "type": "string"
                 },
@@ -2909,6 +3155,9 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "writer_number": {
+                    "type": "integer"
                 }
             }
         },
@@ -2944,18 +3193,15 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "writer_number": {
+                    "type": "integer"
                 }
             }
         },
         "model.DriftingNovel": {
             "type": "object",
-            "required": [
-                "kind"
-            ],
             "properties": {
-                "contact": {
-                    "type": "string"
-                },
                 "cover": {
                     "type": "string"
                 },
@@ -2985,15 +3231,15 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "writer_number": {
+                    "type": "integer"
                 }
             }
         },
         "model.DriftingPicture": {
             "type": "object",
             "properties": {
-                "contact": {
-                    "type": "string"
-                },
                 "cover": {
                     "type": "string"
                 },
@@ -3023,6 +3269,9 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "writer_number": {
+                    "type": "integer"
                 }
             }
         },
@@ -3030,6 +3279,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.GetId": {
+            "type": "object",
+            "properties": {
+                "studentID": {
                     "type": "integer"
                 }
             }
@@ -3092,27 +3349,10 @@ const docTemplate = `{
                 "file_id": {
                     "type": "integer"
                 },
-                "text": {
+                "the_words": {
                     "type": "string"
                 },
                 "writer_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.NoteInfo": {
-            "type": "object",
-            "properties": {
-                "contacts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.NoteContact"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "ownerID": {
                     "type": "integer"
                 }
             }
@@ -3123,7 +3363,7 @@ const docTemplate = `{
                 "file_id": {
                     "type": "integer"
                 },
-                "text": {
+                "the_words": {
                     "type": "string"
                 },
                 "writer_id": {
@@ -3131,36 +3371,16 @@ const docTemplate = `{
                 }
             }
         },
-        "model.NovelInfo": {
+        "model.State": {
             "type": "object",
             "properties": {
-                "contacts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.NoteContact"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "ownerID": {
+                "file_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "model.PictureInfo": {
-            "type": "object",
-            "properties": {
-                "contacts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.DrawingContact"
-                    }
                 },
-                "name": {
+                "file_kind": {
                     "type": "string"
                 },
-                "ownerID": {
+                "writer_id": {
                     "type": "integer"
                 }
             }
@@ -3190,6 +3410,9 @@ const docTemplate = `{
                 },
                 "sex": {
                     "type": "string"
+                },
+                "studentID": {
+                    "type": "integer"
                 }
             }
         }

@@ -10,6 +10,7 @@ import (
 
 // CreateNewDriftingDrawing 创建漂流画
 func CreateNewDriftingDrawing(NewDrawing model.DriftingDrawing) (error, uint) {
+	//NewDrawing.WriterNumber = 1
 	err := mysql.DB.Create(&NewDrawing).Error
 	if err != nil {
 		return err, 0
@@ -19,6 +20,13 @@ func CreateNewDriftingDrawing(NewDrawing model.DriftingDrawing) (error, uint) {
 	if err != nil {
 		return err, 0
 	}
+	//var NewJoined model.JoinedDrifting
+	//NewJoined.StudentID = NewDrawing.OwnerID
+	//NewJoined.DriftingDrawingID = int64(NewDrawing.ID)
+	//err = JoinNewDriftingDrawing(NewJoined)
+	//if err != nil {
+	//	return err, 0
+	//}
 	return err, FindDrawing.ID
 }
 
@@ -42,8 +50,15 @@ func JoinNewDriftingDrawing(Joining model.JoinedDrifting) error {
 func DrawDrawing(StudentID int64, NewDrawingContact model.DrawingContact, f *multipart.FileHeader) error {
 	NewDrawingContact.WriterID = StudentID
 	_, url := qiniu.UploadToQiNiu(f, "drifting_drawing/")
-	NewDrawingContact.Picture = url
+	NewDrawingContact.TheWords = url
 	err := mysql.DB.Create(&NewDrawingContact).Error
+	var NewInfo model.DriftingDrawing
+	err = mysql.DB.Where("id = ?", NewDrawingContact.FileID).Find(&NewInfo).Error
+	if err != nil {
+		return err
+	}
+	NewInfo.WriterNumber = NewInfo.WriterNumber + 1
+	err = mysql.DB.Where("id = ?", NewDrawingContact.FileID).Updates(&NewInfo).Error
 	return err
 }
 
@@ -58,7 +73,7 @@ func RefuseDrawingInvite(TheInvite model.Invite) error {
 	if err != nil {
 		return err
 	}
-	Note.Number = Note.Number - 1
+	Note.SetNumber = Note.SetNumber - 1
 	err = mysql.DB.Where("id = ?", Note.ID).Updates(&Note).Error
 	return err
 }
@@ -88,9 +103,9 @@ func GetJoinedDriftingDrawings(StudentID int64) ([]model.DriftingDrawing, error)
 		return nil, err
 	}
 	for _, v := range Joined {
-		if v.DriftingNoteID != 0 {
+		if v.DriftingDrawingID != 0 {
 			var a model.DriftingDrawing
-			err = mysql.DB.Where("id = ?", v.DriftingDrawingID).First(&a).Error
+			err = mysql.DB.Where("id = ?", v.DriftingDrawingID).Find(&a).Error
 			if err != nil {
 				return nil, err
 			}
@@ -101,9 +116,9 @@ func GetJoinedDriftingDrawings(StudentID int64) ([]model.DriftingDrawing, error)
 }
 
 // RandomRecommendDrawing 随机推荐漂流画
-func RandomRecommendDrawing() (model.DriftingDrawing, error) {
+func RandomRecommendDrawing(StudentID int64) (model.DriftingDrawing, error) {
 	var drawings []model.DriftingDrawing
-	err := mysql.DB.Not("kind", "熟人模式").Find(&drawings).Error
+	err := mysql.DB.Not("kind", 1).Not("number", 1, 0).Not("owner_id", StudentID).Find(&drawings).Error
 	if err != nil {
 		return model.DriftingDrawing{}, err
 	}
@@ -125,5 +140,9 @@ func RandomRecommendDrawing() (model.DriftingDrawing, error) {
 // DeleteDrawing 删除漂流画
 func DeleteDrawing(DLDrawing model.DriftingDrawing) error {
 	err := mysql.DB.Where(&DLDrawing).Delete(&DLDrawing).Error
+	if err != nil {
+		return err
+	}
+	err = mysql.DB.Where("drifting_drawing_id = ?", DLDrawing.ID).Delete(&model.JoinedDrifting{}).Error
 	return err
 }

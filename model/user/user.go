@@ -13,6 +13,7 @@ func GetUserInfo(StudentId int64) (model.UserInfo, error) {
 	var user model.User
 	err := mysql.DB.Where("student_id = ?", StudentId).First(&user).Error
 	var userInfo model.UserInfo
+	userInfo.StudentID = user.StudentID
 	userInfo.Name = user.Name
 	userInfo.Sex = user.Sex
 	userInfo.SelfWord = user.SelfWord
@@ -30,6 +31,7 @@ func UpdateUserInfo(UpdateUser *model.User) (model.User, error) {
 	UpdateInFriends.StudentID = UpdateUser.StudentID
 	UpdateInFriends.Name = UpdateUser.Name
 	UpdateInFriends.Sex = UpdateUser.Sex
+	UpdateInFriends.SelfWord = UpdateUser.SelfWord
 	err := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateUser).Error
 	err2 := mysql.DB.Where("student_id = ?", UpdateUser.StudentID).Updates(&UpdateInFriends).Error
 	if err2 != nil {
@@ -44,8 +46,10 @@ func UpdateUserAvatar(file *multipart.FileHeader, StudentID int64) error {
 	_, url := qiniu.UploadToQiNiu(file, "user_avatar/")
 	var U model.User
 	err := mysql.DB.Model(&U).Where("student_id = ?", StudentID).Update("avatar", url).Error
+	if err != nil {
+		return err
+	}
 	var FriendsInfo model.Friend
-	FriendsInfo.Avatar = url
-	mysql.DB.Where("student_id = ?", StudentID).Updates(&FriendsInfo)
+	err = mysql.DB.Model(&FriendsInfo).Where("student_id = ?", StudentID).Update("avatar", url).Error
 	return err
 }

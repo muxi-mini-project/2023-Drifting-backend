@@ -33,7 +33,7 @@ func CreateDriftingPicture(c *gin.Context) {
 		handler.SendBadResponse(c, "创建失败", err)
 		return
 	}
-	handler.SendGoodResponse(c, "创建成功，获得漂流相片id", id)
+	handler.SendGoodResponse(c, "创建成功，获得漂流相机id", id)
 }
 
 // @Summary 获取用户漂流照片
@@ -42,7 +42,7 @@ func CreateDriftingPicture(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.DriftingPicture "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/drifting_picture/create  [get]
 func GetCreatedDriftingPictures(c *gin.Context) {
@@ -88,7 +88,7 @@ func JoinDriftingPicture(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.DriftingNote "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/drifting_picture/join [get]
 func GetJoinedDriftingPictures(c *gin.Context) {
@@ -107,8 +107,8 @@ func GetJoinedDriftingPictures(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Param file formData file true "内容"
-// @Param id formData string true "id"
+// @Param picture formData file true "内容"
+// @Param file_id formData string true "id"
 // @Success 200 {object} handler.Response "{"message":"创建成功"}"
 // @Failure 400 {object} handler.Response "{"message":"创建失败"}"
 // @Router /api/v1/drifting_picture/draw [post]
@@ -142,9 +142,9 @@ func DrawDriftingPicture(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param FDriftingNote body model.GetFileId true "获取的ID"
-// @Success 200 {object} model.PictureInfo "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
-// @Router /api/v1/drifting_picture/detail [get]
+// @Router /api/v1/drifting_picture/detail [post]
 func GetDriftingPictureDetail(c *gin.Context) {
 	var FDriftingPicture model.DriftingPicture
 	c.BindJSON(&FDriftingPicture)
@@ -174,7 +174,7 @@ func InviteFriend(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
 	}
-	err = driftingfile.CreateInvite(NewInvite)
+	err = driftingfile.CreateInvite(NewInvite, "漂流相机")
 	if err != nil {
 		handler.SendBadResponse(c, "邀请失败，你可能已经已经邀请过该好友", err)
 		return
@@ -188,7 +188,7 @@ func InviteFriend(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.Invite "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取信息失败"}"
 // @Router /api/v1/drifting_picture/invite [get]
 func GetInvite(c *gin.Context) {
@@ -234,13 +234,14 @@ func RefuseInvite(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} model.DriftingPicture "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
 // @Router /api/v1/drifting_picture/recommendation [get]
 func RandomRecommendation(c *gin.Context) {
-	TheNote, err := driftingfile.RandomRecommendPicture()
+	StudentID := c.MustGet("student_id").(int64)
+	TheNote, err := driftingfile.RandomRecommendPicture(StudentID)
 	if err != nil {
-		handler.SendBadResponse(c, "漂流照片推送失败", err)
+		handler.SendBadResponse(c, "漂流相机推送失败", err)
 		return
 	}
 	handler.SendGoodResponse(c, "推送成功", TheNote)

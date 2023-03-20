@@ -68,7 +68,7 @@ func WriteDriftingNovel(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.DriftingNovel "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/drifting_novel/create  [get]
 func GetCreatedDriftingNovels(c *gin.Context) {
@@ -114,7 +114,7 @@ func JoinDrifting(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.DriftingNovel "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"Failure"}"
 // @Router /api/v1/drifting_novel/join [get]
 func GetJoinedDriftingNovels(c *gin.Context) {
@@ -134,9 +134,9 @@ func GetJoinedDriftingNovels(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "token"
 // @Param FDriftingNovel body model.DriftingNovel true "获取的ID"
-// @Success 200 {object} model.NovelInfo "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
-// @Router /api/v1/drifting_novel/detail [get]
+// @Router /api/v1/drifting_novel/detail [post]
 func GetDriftingNovelDetail(c *gin.Context) {
 	var FDriftingNovel model.DriftingNovel
 	c.BindJSON(&FDriftingNovel)
@@ -166,7 +166,7 @@ func InviteFriend(c *gin.Context) {
 		handler.SendBadResponse(c, "获取信息失败", err)
 		return
 	}
-	err = driftingfile.CreateInvite(NewInvite)
+	err = driftingfile.CreateInvite(NewInvite, "漂流小说")
 	if err != nil {
 		handler.SendBadResponse(c, "邀请失败，你可能已经已经邀请过该好友", err)
 		return
@@ -180,7 +180,7 @@ func InviteFriend(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} []model.Invite "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取信息失败"}"
 // @Router /api/v1/drifting_novel/invite [get]
 func GetInvite(c *gin.Context) {
@@ -226,11 +226,12 @@ func RefuseInvite(c *gin.Context) {
 // @Accept  application/json
 // @Produce  application/json
 // @Param Authorization header string true "token"
-// @Success 200 {object} model.DriftingNovel "{"message":"获取成功"}"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
 // @Failure 400 {object} handler.Response "{"message":"获取失败"}"
 // @Router /api/v1/drifting_novel/recommendation [get]
 func RandomRecommendation(c *gin.Context) {
-	TheNovel, err := driftingfile.RandomRecommendNovel()
+	StudentID := c.MustGet("student_id").(int64)
+	TheNovel, err := driftingfile.RandomRecommendNovel(StudentID)
 	if err != nil {
 		handler.SendBadResponse(c, "漂流小说推送失败", err)
 		return

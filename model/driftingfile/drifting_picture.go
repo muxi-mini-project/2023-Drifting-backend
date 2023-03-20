@@ -8,8 +8,9 @@ import (
 	"mime/multipart"
 )
 
-// CreateNewDriftingPicture 创建漂流照片
+// CreateNewDriftingPicture 创建漂流相机
 func CreateNewDriftingPicture(NewPicture model.DriftingPicture) (error, uint) {
+	//NewPicture.WriterNumber = 1
 	err := mysql.DB.Create(&NewPicture).Error
 	if err != nil {
 		return err, 0
@@ -19,16 +20,24 @@ func CreateNewDriftingPicture(NewPicture model.DriftingPicture) (error, uint) {
 	if err != nil {
 		return err, 0
 	}
+	//var NewJoined model.JoinedDrifting
+	//NewJoined.StudentID = NewPicture.OwnerID
+	//NewJoined.DriftingPictureID = int64(NewPicture.ID)
+	//err = JoinDriftingNote(NewJoined)
+	//if err != nil {
+	//	return err, 0
+	//}
 	return err, FindPicture.ID
 }
 
+// GetDriftingPicture 获取用户创建的漂流相机
 func GetDriftingPicture(StudentID int64) ([]model.DriftingPicture, error) {
 	var pictures []model.DriftingPicture
 	err := mysql.DB.Where("owner_id=?", StudentID).Find(&pictures).Error
 	return pictures, err
 }
 
-// JoinNewDriftingPicture 参与漂流照片
+// JoinNewDriftingPicture 参与漂流相机
 func JoinNewDriftingPicture(Joining model.JoinedDrifting) error {
 	err := mysql.DB.Where(&Joining).First(&Joining).Error
 	if err != nil {
@@ -38,16 +47,23 @@ func JoinNewDriftingPicture(Joining model.JoinedDrifting) error {
 	return errno.ErrDatabase
 }
 
-// DrawPicture 创作漂流照片
+// DrawPicture 创作漂流相机
 func DrawPicture(StudentID int64, NewPictureContact model.PictureContact, f *multipart.FileHeader) error {
 	NewPictureContact.WriterID = StudentID
 	_, url := qiniu.UploadToQiNiu(f, "drifting_picture/")
-	NewPictureContact.Picture = url
+	NewPictureContact.TheWords = url
 	err := mysql.DB.Create(&NewPictureContact).Error
+	var NewInfo model.DriftingPicture
+	err = mysql.DB.Where("id = ?", NewPictureContact.FileID).Find(&NewInfo).Error
+	if err != nil {
+		return err
+	}
+	NewInfo.WriterNumber = NewInfo.WriterNumber + 1
+	err = mysql.DB.Where("id = ?", NewPictureContact.FileID).Updates(&NewInfo).Error
 	return err
 }
 
-// RefusePictureInvite 拒绝漂流照片邀请
+// RefusePictureInvite 拒绝漂流相机邀请
 func RefusePictureInvite(TheInvite model.Invite) error {
 	err := mysql.DB.Where(&TheInvite).Delete(&TheInvite).Error
 	if err != nil {
@@ -58,11 +74,12 @@ func RefusePictureInvite(TheInvite model.Invite) error {
 	if err != nil {
 		return err
 	}
-	Note.Number = Note.Number - 1
+	Note.SetNumber = Note.SetNumber - 1
 	err = mysql.DB.Where("id = ?", Note.ID).Updates(&Note).Error
 	return err
 }
 
+// DriftingPictureDetail 获取漂流相机内容
 func DriftingPictureDetail(FD model.DriftingPicture) (model.PictureInfo, error) {
 	var info model.PictureInfo
 	err := mysql.DB.Where(&FD).First(&FD).Error
@@ -78,7 +95,7 @@ func DriftingPictureDetail(FD model.DriftingPicture) (model.PictureInfo, error) 
 	return info, nil
 }
 
-// GetJoinedDriftingPictures 获取某人加入的漂流照片
+// GetJoinedDriftingPictures 获取某人加入的漂流相机
 func GetJoinedDriftingPictures(StudentID int64) ([]model.DriftingPicture, error) {
 	var pictures []model.DriftingPicture
 	var Joined []model.JoinedDrifting
@@ -87,9 +104,9 @@ func GetJoinedDriftingPictures(StudentID int64) ([]model.DriftingPicture, error)
 		return nil, err
 	}
 	for _, v := range Joined {
-		if v.DriftingNoteID != 0 {
+		if v.DriftingPictureID != 0 {
 			var a model.DriftingPicture
-			err = mysql.DB.Where("id = ?", v.DriftingPictureID).First(&a).Error
+			err = mysql.DB.Where("id = ?", v.DriftingPictureID).Find(&a).Error
 			if err != nil {
 				return nil, err
 			}
@@ -99,10 +116,10 @@ func GetJoinedDriftingPictures(StudentID int64) ([]model.DriftingPicture, error)
 	return pictures, nil
 }
 
-// RandomRecommendPicture 随机推荐漂流相片
-func RandomRecommendPicture() (model.DriftingPicture, error) {
+// RandomRecommendPicture 随机推荐漂流相机
+func RandomRecommendPicture(StudentID int64) (model.DriftingPicture, error) {
 	var pictures []model.DriftingPicture
-	err := mysql.DB.Not("kind", "熟人模式").Find(&pictures).Error
+	err := mysql.DB.Not("kind", 1).Not("number", 1, 0).Not("owner_id", StudentID).Find(&pictures).Error
 	if err != nil {
 		return model.DriftingPicture{}, err
 	}
@@ -121,8 +138,12 @@ func RandomRecommendPicture() (model.DriftingPicture, error) {
 	return ret, nil
 }
 
-// DeletePicture 删除指定漂流相片
+// DeletePicture 删除指定漂流相机
 func DeletePicture(ThePicture model.DriftingPicture) error {
 	err := mysql.DB.Where(&ThePicture).Delete(&ThePicture).Error
+	if err != nil {
+		return err
+	}
+	err = mysql.DB.Where("drifting_picture_id = ?", ThePicture.ID).Delete(&model.JoinedDrifting{}).Error
 	return err
 }

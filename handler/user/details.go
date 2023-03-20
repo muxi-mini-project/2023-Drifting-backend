@@ -81,3 +81,30 @@ func UpdateUserAvatar(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"message": "成功"})
 }
+
+// @Summary 获取用户信息(用id)
+// @Description 获取用户信息
+// @Tags user
+// @Accept  application/json
+// @Produce  application/json
+// @Param  Authorization header string true "token"
+// @Param UserId body model.GetId true "user_id"
+// @Success 200 {object} handler.Response "{"message":"获取成功"}"
+// @Failure 400 {object} handler.Response "{"message":"Failure"}"
+// @Router /api/v1/user/id_detail [get]
+func GetUserDetailsByID(c *gin.Context) {
+	var TheStudent model.User
+	err := c.BindJSON(&TheStudent)
+	if err != nil {
+		handler.SendBadResponse(c, "获取信息失败", err)
+		return
+	}
+	//执行获取信息函数
+	UserInfo, err := user.GetUserInfo(TheStudent.StudentID)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "获取用户信息失败"})
+		return
+	}
+	//返回正确信息
+	handler.SendGoodResponse(c, "获取成功", UserInfo)
+}
